@@ -1,0 +1,8 @@
+Figure3     Plots Kaplan-Meier together with several confidence interval for Nash et al data
+
+Figure4     Plots Kaplan-Meier together with 2 confidence intervals for National Wilms Tumor data
+
+Simulation     Does Simulation for paper. Actual simulation took over a week to run. See code to set number of reps.
+
+
+
