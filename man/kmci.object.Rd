@@ -9,7 +9,7 @@
 }
 \description{
 There are two classes of objects described in this help, the \code{kmciLR} class returned by the functions \code{\link{bpcp}} or \code{\link{kmciBorkowf}},
- and the   \code{kmciLR} class returned by the functions  \code{\link{kmciTG}} or \code{\link{kmciSW}}. Both classes 
+ and the   \code{kmci} class returned by the functions  \code{\link{kmciTG}} or \code{\link{kmciSW}}. Both classes 
 represent a fitted survival curve with pointwise confidence intervals. 
 
 The \code{kmciLR} class allows for confidence intervals to change at  any time point, while the \code{kmci} class only has the confidence intervals change at observed failures.

@@ -7,6 +7,7 @@
 \alias{kmciSW}
 \alias{kmciTG}
 \alias{kmci1TG}
+\alias{kmtestBoot}
 
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
@@ -24,6 +25,7 @@ bpcp(time,status,nmc=0,alpha=.05,Delta=0,stype="km")
 
 
 kmciBorkowf(time, status, type="log", alpha = 0.05)
+kmtestBoot(time, status, tstar, pstar, M = 1000, alpha = 0.05)
 kmtestConstrainBoot(time, status, tstar, pstar, M = 1000, alpha = 0.05)
 kmtestConstrainBeta(time,status,tstar,pstar,alpha=.05)
 kmciSW(time, status, alpha = 0.05)
@@ -65,13 +67,15 @@ hence the BPCP (as with the other confidence interval given here) goes to the co
 
 Now we describe the other methods. 
 In general the functions are of three naming types: kmtestXX, kmci1XX and kmciXX, where XX changes for different methods. 
-Functions kmtestXX only test whether S(tstar)=pstar and return a value of 1 for reject and 0 for fail to reject. 
+Functions kmtestXX only test whether S(tstar)=pstar and return a vector of 1s for reject and 0s for fail to rejecting either of the one-sided or the two-sided hypotheses. 
 Functions kmci1XX only give confidence intervals at  S(tstar), while kmciXX give confidence intervals for all values of t.
 The standard methods calculate the confidence intervals at the observed failure times and carry them forward (e.g., kmciTG, kmciSW)
 and the results are objects of class kmci. More involved methods allow confidence intervals to change after censored objects (e.g., kmciBorkowf, bpcp)
 and the results are objects of class kmciLR.  
 
-The function kmtestConstrainBeta tests S(tstar)=pstar using the constrained Beta method described in Barber and Jennison (1999). 
+The function kmtestBoot tests S(tstar)=pstar using the nonparametric bootstrap (sampling vectors of (time,status) with replacement) with the percentile method as described in Efron (1981). 
+The function kmtestConstrainBoot and kmtestConstrainBeta tests S(tstar)=pstar using the constrained Bootstrap or constrained Beta method described 
+in Barber and Jennison (1999). 
 
 The function kmci1TG does a confidence interval only at tstar, while kmciTG does a confidence interval 
 at all the observed event times. The method can be derived as a likelihood ratio test and is described in  Thomas and Grunkemeier (1975). 
@@ -92,8 +96,8 @@ estimate with normal approximation (type="norms"), the log transformed normal ap
 and the log transformed normal approximation using the delta method with the shifted K-M  (type="logs"). 
 
 
-The function \code{kmtestALL} performs hypothesis tests on all the methods (unless M=0 then it does not test the bootstrap method). The output is 
-a matrix with three columns with a value of 1 representing either (1) rejection for two-sided test implying the estimate is greater than the null, 
+The function \code{kmtestALL} performs hypothesis tests on all the methods except the unconstrained bootstrap method (unless M=0 then it does not test the constrained bootstrap method either). 
+The output is a matrix with three columns with a value of 1 representing either (1) rejection for two-sided test implying the estimate is greater than the null, 
 (2) rejection for two-sided test implying the estimate less than the null, or (3) any rejection of the two-sided test. 
 Each row represents a different test.
 
@@ -119,13 +123,15 @@ while the kmciLR have intervals represented by the four elements
 \item{Rin}{logical vector, include right endpoint?}
 }
 \references{
-Fay, Brittain, Proschan. Pointwise Confidence Intervals for a Survival Distribution for Right Censored Data with Small Samples or Heavy Censoring (unpublished manuscript).
+Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics (to appear)
+doi: 10.1093/biostatistics/kxt016. (copy available at http://www.niaid.nih.gov/about/organization/dcr/brb/staff/Pages/michael.aspx).  
 
 
 Barber and Jennison (1999) Biometrics, 55: 430-436.
 
 Borkowf (2005) Statistics in Medicine, 24: 827-851.
 
+Efron (1981) JASA 76:312-319.
 
 Murphy (1995) JASA 90: 1399-1405.
 

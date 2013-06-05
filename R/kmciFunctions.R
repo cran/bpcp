@@ -374,6 +374,32 @@ rejectFromInt<-function(theta,interval,thetaParm=FALSE){
     reject
 }
 
+kmtestBoot<-function(time,status,tstar,pstar,M=1000,alpha=0.05){
+    x<-kmgw.calc(time,status,keepCens=FALSE)
+    ### pick out KM at tstar
+    Sx<-function(x,tstar){
+        I<-x$time<=tstar
+        if (!any(I)) out<-1
+        else out<-x$KM[max((1:length(x$KM))[I])]
+        out
+    }
+
+    # get observed value
+    Sobs<-Sx(x,tstar)
+ 
+    n<-length(time)
+
+    SB<-rep(NA,M)
+    for (i in 1:M){
+        ii<-sample(n,replace=TRUE)   
+        temp<-kmgw.calc(time[ii],status[ii],keepCens=FALSE)
+        SB[i]<-Sx(temp,tstar)
+    }
+    ### use type=4 quantile so that equals value defined in Barber and Jennison  S[M*0.025] = S[25] when M=1000
+    quantilesNullDistribution<-quantile(SB,c(alpha/2,1-alpha/2),type=4)
+    reject<-rejectFromInt(pstar,quantilesNullDistribution,thetaParm=TRUE)
+    reject
+}
 
 kmtestConstrainBoot<-function(time,status,tstar,pstar,M=1000,alpha=0.05){
     x<-kmgw.calc(time,status,keepCens=FALSE)

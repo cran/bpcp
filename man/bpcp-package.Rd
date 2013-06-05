@@ -12,8 +12,8 @@ The primary purpose of the package is to show that the beta product confidence p
 \tabular{ll}{
 Package: \tab bpcp\cr
 Type: \tab Package\cr
-Version: \tab 0.5.0\cr
-Date: \tab 2012-06-28\cr
+Version: \tab 1.0.0\cr
+Date: \tab 2013-06-05\cr
 License: \tab GPL2\cr
 LazyLoad: \tab yes\cr
 }
@@ -30,7 +30,8 @@ Maintainer: Michael Fay <mfay@niaid.nih.gov>
 
 }
 \references{
-Fay, MP, Brittain, E, and Proschan, MA. Pointwise Confidence Intervals for a Survival Distribution for Right Censored Data with Small Samples or Heavy Censoring (unpublished manuscript) 
+Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics (to appear)
+doi: 10.1093/biostatistics/kxt016. (copy available at http://www.niaid.nih.gov/about/organization/dcr/brb/staff/Pages/michael.aspx).  
 }
 \keyword{ package }
 \keyword{survival}
