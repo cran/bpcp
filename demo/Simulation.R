@@ -1,7 +1,9 @@
 ### Simulation code
 ###
-###     Increate parameters in initialization section for more replications, 
-###     and more methods, see comments      
+###     Increase parameters in initialization section for more replications, 
+###     and more methods, see comments    
+###
+###     Simulation for unconstrained Bootstrap is in a separate file, since it was requested by a reviewer after the initial submission  
 #################################################################
 #   Initialization of parameters
 #

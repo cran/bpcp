@@ -2,7 +2,9 @@ Figure3     Plots Kaplan-Meier together with several confidence interval for Nas
 
 Figure4     Plots Kaplan-Meier together with 2 confidence intervals for National Wilms Tumor data
 
-Simulation     Does Simulation for paper. Actual simulation took over a week to run. See code to set number of reps.
+Simulation     Does most of Simulations for paper (except unconstrained bootstrap). Actual simulations took over a week to run. See code to set number of reps.
+
+SimulationBootOnly     Does Unconstrained bootstrap Simulation for paper. Requested by reviewer, and done after initial submission.
 
 
 
