@@ -1,7 +1,7 @@
 
 export(uvab,abmm,qqbeta,kmgw.calc,bpcp,bpcp.mm,bpcp.mc,kmcilog,intChar,borkowf.calc,getmarks,getmarks.x,
 kmciBorkowf,kmci1TG,kmciTG,kmciSW,kmConstrain,rejectFromInt,kmConstrainBeta.calc,kmtestConstrainBeta,kmtestConstrainBoot,
-kmciSW,kmtestALL,citoLR,StCI)
+kmciSW,kmtestALL,citoLR,StCI, bpcp2samp, betaMeldTest, bpcp2sampControl, fixtdiff, mdiffmedian.test)
 
 importFrom(stats,median,quantile)
 

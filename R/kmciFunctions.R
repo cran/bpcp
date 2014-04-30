@@ -966,42 +966,66 @@ bpcp.mm<-function(x,alpha=.05){
     ## Sb is survival at beginning and Se is survival at end
     Se<-1
     lower<-upper<-rep(1,3*k+1)
+    ## a and b change for each iteration
     a<-b<-NULL
+    ## 2013-07-15: add vectors for outputing the beta parameters
+    ## each element matches the beta parameters for the lower or upper interval
+    alower<-aupper<-blower<-bupper<-rep(NA,3*k+1)
     for (j in 1:k){
         ## case 1: t_j is a death time (and perhaps censor time also)
         if (x$di[j]>0){
             ## a is null at or before the first death time
             if (is.null(a)){
                 upper[(3*j-2):(3*j-1)]<-1
+                # when b=0, we get a point mass at 1 when a>0, so set a=1
+                aupper[(3*j-2):(3*j-1)]<-1
+                bupper[(3*j-2):(3*j-1)]<-0
                 ## first interval uses beta for first death time
                 lower[(3*j-2)]<-qbeta(alpha/2,x$ni[j],1)
+                alower[(3*j-2)]<-x$ni[j]
+                blower[(3*j-2)]<-1
                 a<-x$ni[j] - x$di[j] + 1
                 b<- x$di[j]
            } else {
                 ## after first death time, get upper from upper from previous
                 upper[(3*j-2):(3*j-1)]<- upper[3*(j-1)]
+                aupper[(3*j-2):(3*j-1)]<- aupper[3*(j-1)]
+                bupper[(3*j-2):(3*j-1)]<- bupper[3*(j-1)]
                 abtemp<-abmm(a,b,x$ni[j],1)
                 lower[(3*j-2)]<-qbeta(alpha/2,abtemp$a,abtemp$b)
+                alower[(3*j-2)]<-abtemp$a
+                blower[(3*j-2)]<-abtemp$b
                 ab<-abmm(a,b,x$ni[j] - x$di[j] + 1,x$di[j])
                 a<-ab$a
                 b<-ab$b
                 
             }
             upper[3*j]<-qbeta(1-alpha/2,a,b)
+            aupper[3*j]<-a
+            bupper[3*j]<-b
             lower[(3*j-1):(3*j)]<-qbeta(alpha/2,a,b)
+            alower[(3*j-1):(3*j)]<-a
+            blower[(3*j-1):(3*j)]<-b
         }  else {
             ## case 2: (else) time with censoring but no deaths
             ## a is null at or before the first death time
             if (is.null(a)){
                 upper[(3*j-2):(3*j)]<-1
+                aupper[(3*j-2):(3*j)]<-1
+                bupper[(3*j-2):(3*j)]<-0
                 ## first interval uses beta for first death time
                 lower[(3*j-2):(3*j)]<-qbeta(alpha/2,x$ni[j],1)
+                alower[(3*j-2):(3*j)]<-x$ni[j]
+                blower[(3*j-2):(3*j)]<-1
            } else {
                 ## after first death time, get upper from upper from previous
                 upper[(3*j-2):(3*j)]<- upper[3*(j-1)]
+                aupper[(3*j-2):(3*j)]<- aupper[3*(j-1)]
+                bupper[(3*j-2):(3*j)]<- bupper[3*(j-1)]
                 abtemp<-abmm(a,b,x$ni[j],1)
                 lower[(3*j-2):(3*j)]<-qbeta(alpha/2,abtemp$a,abtemp$b)
-                
+                alower[(3*j-2):(3*j)]<-abtemp$a
+                blower[(3*j-2):(3*j)]<-abtemp$b                
             }
  
         }  
@@ -1009,8 +1033,12 @@ bpcp.mm<-function(x,alpha=.05){
 
     }
     upper[3*k+1]<-upper[3*k]
+    aupper[3*k+1]<-aupper[3*k]
+    bupper[3*k+1]<-bupper[3*k]
     lower[3*k+1]<-0
-    list(upper=upper,lower=lower)
+    alower[3*k+1]<-0
+    blower[3*k+1]<-1
+    list(upper=upper,lower=lower,alower=alower,blower=blower,aupper=aupper,bupper=bupper)
 }
 
 bpcp.mc<-function(x,nmc=100,alpha=.05){
@@ -1132,20 +1160,23 @@ bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km"){
         outtemp<-bpcp(time,status,nmc,alpha=1,Delta,stype="km")
         SURV<- .5*outtemp$lower + .5*outtemp$upper
     }
+    ## create list of beta parameters to go with the lower and upper CIs
+    betaParms<-NULL
+    if (nmc==0) betaParms<-list(
+        alower=hilo$alower[keep],
+        blower=hilo$blower[keep],
+        aupper=hilo$aupper[keep],
+        bupper=hilo$bupper[keep])
     out<-list(cens=getmarks(time,status),surv=SURV,
         lower=hilo$lower[keep],
         upper=hilo$upper[keep],
         L=L[keep],Lin=Lin[keep],R=R[keep],Rin=Rin[keep],
-        Interval=intChar(L,R,Lin,Rin)[keep],stype=stype)
+        Interval=intChar(L,R,Lin,Rin)[keep],stype=stype, 
+        betaParms=betaParms, conf.level=1-alpha)
     class(out)<-"kmciLR"
     out
 }
 
-
-
-leuk<-data.frame(
- time=c(6,6,6,6,7,9,10,10,11,13,16,17,19,20,22,23,25,32,32,34,35),
- status=c(1,1,1,0,1,0,1,0,0,1,1,0,0,0,1,1,0,0,0,0,0))
 
 
 

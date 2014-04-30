@@ -1,24 +1,21 @@
 \name{kmci.object}
 \alias{kmci.object}
-\alias{kmciLR.object}
 \alias{kmci}
-\alias{kmciLR}
 
 \title{
   Kaplan-Meier (Survival Curve) Confidence Interval Object 
 }
 \description{
-There are two classes of objects described in this help, the \code{kmciLR} class returned by the functions \code{\link{bpcp}} or \code{\link{kmciBorkowf}},
- and the   \code{kmci} class returned by the functions  \code{\link{kmciTG}} or \code{\link{kmciSW}}. Both classes 
-represent a fitted survival curve with pointwise confidence intervals. 
+The \code{kmci} class is returned by the functions  \code{\link{kmciTG}} or \code{\link{kmciSW}}. The  class 
+represents a fitted survival curve with pointwise confidence intervals. 
 
-The \code{kmciLR} class allows for confidence intervals to change at  any time point, while the \code{kmci} class only has the confidence intervals change at observed failures.
+Unlike the \code{\link{kmciLR}} class, which  allows for confidence intervals to change at  any time point, 
+the \code{kmci} class only has the confidence intervals change at observed failures.
 
 
 Objects of this class has methods for the functions \code{summary}, \code{plot}, \code{lines}. 
 
 
-Class of objects that represent a fitted survival curve. 
 }
 \section{Structure}{
 The following components must be included in a legitimate 
@@ -43,10 +40,11 @@ upper confidence limit for the survival curve.
 lower confidence limit for the survival curve. 
 }
 \item{conf.level}{
-the level of the confidence limits, e.g. 90 or 95\%. 
+the level of the confidence limits, e.g., 0.95. 
 }
 }
 \seealso{
+\code{\link{kmciLR.object}}
 \code{\link{plot.kmci}},  
 \code{\link{summary.kmci}},
 \code{\link{StCI.kmci}},

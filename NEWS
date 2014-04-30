@@ -1,3 +1,12 @@
+CHANGES in `bpcp' VERSION 1.1-0
+- modify output for bpcp so that it outputs beta parameters associated with method of moments implementation. 
+  This is needed for testing at fixed time points in the two sample case using the bpcp2samp function.
+- create bpcp2samp function for the two sample test for differences at a fixed time point using the confidence distribution approach.
+- create fixtdiff function for the two sample test for differences at a fixed time point using asyptotic normal approximations
+-create mdiffmedian.test function for the two sample test for differences in medians (with no censoring)
+- edit help for kmciLR and kmci objects.
+- add conf.level for output to kmciLR objects
+
 CHANGES in `bpcp' VERSION 1.0-0
 - add kmtestBoot, unconstrained Bootstrap
 - add SimulationBootOnly to demo. 

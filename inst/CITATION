@@ -1,0 +1,25 @@
+citHeader("To cite bpcp in publications use:")
+
+citEntry(entry="Article",
+  title        = "Pointwise confidence intervals for a survival distribution with small samples or heavy censoring",
+  author       = personList(as.person("Michael P. Fay"),as.person("Erica H. Brittain"),as.person("Michael A. Proschan")), 
+  journal      = "Biostatistics",
+  year         = "2013",
+  volume       = "14",
+  number       = "4",  
+  pages        = "723-736",
+  url ="http://www3.niaid.nih.gov/about/organization/dcr/BRB/staff/michael.htm",
+  textVersion  ="Fay MP, Brittain, EH, Proschan, MA (2013). Pointwise confidence intervals for a survival distribution with small samples or heavy censoring. Biostatistics 14(4) 723-736.",
+  header = "For inferences about a single survival distribution cite:"
+)
+
+citEntry(entry="Article",
+  title        = "Combining one sample confience procedures for inference in the two sample case",
+  author       = personList(as.person("Michael P. Fay"),as.person("Michael A. Proschan"),as.person("Erica H. Brittain")), 
+  journal      = "unpublished manuscript",
+  year ="2014",
+  url ="http://www3.niaid.nih.gov/about/organization/dcr/BRB/staff/michael.htm",
+  textVersion  ="Fay MP,  Proschan, MA, Brittain, E, (2014). Combining one sample confience procedures for inference in the two sample case.",
+  header = "For inferences on differences in two survival distributions cite:"
+)
+

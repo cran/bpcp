@@ -121,6 +121,8 @@ while the kmciLR have intervals represented by the four elements
 \item{Lin}{logical vector, include left endpoint?}
 \item{R}{right endpoint of interval}
 \item{Rin}{logical vector, include right endpoint?}
+and results from bpcp additionally have an element
+\item{betaParms}{list with 4 elements of beta parameters associated with the CIs: alower, blower, aupper, bupper} 
 }
 \references{
 Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics (to appear)

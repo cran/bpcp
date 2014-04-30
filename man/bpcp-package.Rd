@@ -5,33 +5,43 @@
 Pointwise Confidence Intervals Associated with the Survival Distribution for right censored data
 }
 \description{
-These functions give several different methods for calculating pointwise confidence intervals for the survival distribution for right censored data. 
-The primary purpose of the package is to show that the beta product confidence procedure  (using \code{\link{bpcp}}) has better coverage than the best alternatives. 
-}
+The package has functions to give several different methods for calculating pointwise confidence intervals for a single survival distribution for right censored data. There is also a two-sample test for dissimilarity (measured by difference, ratio, or odds ratio) between two survival distributions at a fixed point in time. 
+
+
+The recommended confidence interval for a single sample is the beta product confidence procedure  (using \code{\link{bpcp}}), and the recommended test for the two-sample test is the melded BPCP test (using \code{\link{bpcp2samp}}).
+ 
+Other confidence intervals and two sample tests are included in the package primarily to compare them to the recommended ones. (And justify the recommendations). 
+
+Also included is a difference in medians test that applies only to non-censored data and is designed to guarantee coverage for all sample sizes (see \code{\link{mdiffmedian.test}}). The test makes no assumptions about the distributions, so that, unlike the Hodges-Lehmann method, tied data are allowed and a shift assumption is not needed.
+ }
 \details{
 \tabular{ll}{
 Package: \tab bpcp\cr
 Type: \tab Package\cr
-Version: \tab 1.0.0\cr
-Date: \tab 2013-06-05\cr
+Version: \tab 1.1.0\cr
+Date: \tab 2014-04-25\cr
 License: \tab GPL2\cr
 LazyLoad: \tab yes\cr
 }
-The most important function is the  \code{\link{bpcp}} which gives confidence intervals for the survival distribution for right censored data with nice small sample 
+The most important function for the single sample case is the  \code{\link{bpcp}} which gives confidence intervals for the survival distribution for right censored data with nice small sample 
 properties. That function creates an \code{kmciLR} object which has 6 methods: \code{summary} (create a data frame with estimates and confidence intervals), 
 \code{plot} (plot Kaplan-Meier with confidence intervals), \code{lines} (add confidence intervals to a plot),  
 \code{StCI} (pick out survival and confidence interval at specific times),
-\code{median} (pick out median and confidence interval on median), and \code{quantile} (pick out any quantile and its confidence interval). 
+\code{median} (pick out median and confidence interval on median), and \code{quantile} (pick out any quantile and its confidence interval). For details see Fay et al (2013).
+
+For the two-sample test see \code{\link{bpcp2samp}}. This test for equality reduces to Fisher's exact test when there is no censoring. When there is censoring, the test is expected to maintain at least nominal coverage.  For details see Fay et al (2014). 
 }
 \author{
-Michael Fay
+Michael P. Fay
 
-Maintainer: Michael Fay <mfay@niaid.nih.gov>
+Maintainer: Michael P. Fay <mfay@niaid.nih.gov>
 
 }
 \references{
-Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics (to appear)
+Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics 14(4): 723-736
 doi: 10.1093/biostatistics/kxt016. (copy available at http://www.niaid.nih.gov/about/organization/dcr/brb/staff/Pages/michael.aspx).  
+
+Fay, MP, Proschan, MA, and Brittain, E (2014). Combining One Sample Confidence Procedures for Inference in the Two Sample Case (unpublished manuscript). 
 }
 \keyword{ package }
 \keyword{survival}
