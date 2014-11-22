@@ -8,7 +8,8 @@ Control function for \code{\link{bpcp2samp}}
 Call function to change any one of options, and outputs a list with all defaults except argument that you changed. 
 }
 \usage{
-bpcp2sampControl(Delta = 0, stype = "km", eps = 10^-8)
+bpcp2sampControl(Delta = 0, stype = "km", eps = 10^-8,
+    nmc=10^6, method="mm.mc", seed=391291)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -21,10 +22,15 @@ type of survival estimate, either "km" for Kaplan-Meier or "mue" for median unbi
   \item{eps}{
 small value to make integration tractable
 }
+\item{nmc}{number of Monte Carlo replications}
+\item{method}{either 'mm.mc' (method of moments for one sample, meld with Monte Carlo) or 'mc.mc' (Monte Carlo for one sample and melding) }
+\item{seed}{random number seed, if NULL do not set random number seed}
 }
-%\details{}
+\details{
+We set the seed by default, so that the same data set will always give the same results. If you are doing simulations, this setting of the seed will give problems. So use seed=NULL. 
+}
 \value{
-A list containing the 3 arguments.
+A list containing the 6 arguments.
 }
 %\references{}
 %\author{}

@@ -18,8 +18,8 @@ Also included is a difference in medians test that applies only to non-censored 
 \tabular{ll}{
 Package: \tab bpcp\cr
 Type: \tab Package\cr
-Version: \tab 1.1.0\cr
-Date: \tab 2014-04-25\cr
+Version: \tab 1.2.4\cr
+Date: \tab 2014-11-10\cr
 License: \tab GPL2\cr
 LazyLoad: \tab yes\cr
 }

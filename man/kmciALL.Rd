@@ -21,7 +21,7 @@ The other confidence intervals are included primarily to show that the beta prod
 See details for a description of all the methods.
 }
 \usage{
-bpcp(time,status,nmc=0,alpha=.05,Delta=0,stype="km")
+bpcp(time,status,nmc=0,alpha=.05,Delta=0,stype="km",midp=FALSE)
 
 
 kmciBorkowf(time, status, type="log", alpha = 0.05)
@@ -49,6 +49,7 @@ time to event or censoring
 \item{NMC}{same as nmc}
 \item{Delta}{width of grouped confidence intervals, defaults to 0}
 \item{stype}{type of survival estimate, either "km" for Kaplan-Meier or "mue" for median unbiased estimator} 
+\item{midp}{logical, calculate the mid-p type of interval?}
   \item{tstar}{ time to test survival distribution}
   \item{pstar}{null survival distribution}
   \item{M}{number of bootstrap replications}
@@ -64,6 +65,8 @@ The beta product confidence procedure will give pointwise confidence intervals f
 or Progressive Type II censoring the BPCP guarantees central coverage (e.g., the error rate on either side of the 95 percent confidence interval is guaranteed to be less than 2.5 percent). 
 For general independent censoring the BPCP is asymptotically equivalent to standard methods such as the normal approximation with Greenwood variance, and 
 hence the BPCP (as with the other confidence interval given here) goes to the correct confidence interval for any t.   
+
+There is also a mid-p version of the BPCP. The BPCP is derived from using the known distribution of the failure times, and acting conservatively between the failure times (see Fay, Brittain, and Proschan, 2013 for details). Instead of acting conservatively between the failure times, the midp=TRUE version combines the distributions for the previous failure and the future failure time (see Fay and Brittain, 2014). 
 
 Now we describe the other methods. 
 In general the functions are of three naming types: kmtestXX, kmci1XX and kmciXX, where XX changes for different methods. 
@@ -102,10 +105,10 @@ The output is a matrix with three columns with a value of 1 representing either 
 Each row represents a different test.
 
 
-The \code{kmci} and \code{kmciLR} class have the following methods: \code{summary}, \code{plot}, \code{lines}, \code{quantile}, and \code{median}.
-}
+The \code{\link{kmci}} or \code{\link{kmciLR}} classes have the following methods:
+\code{"\link[=plot.kmci]{plot}"},\code{"\link[=lines.kmci]{lines}"}, \code{"\link[=summary.kmci]{summary}"}, \code{"\link[=quantile.kmci]{quantile}"}, and \code{"\link[=median.kmci]{median}"}. Additionally, you can pull out survival and confidence intervals from these objects at specific times using \code{"\link[=StCI.kmci]{StCI}"}. }
 \value{
-The functions return an object of class either kmci or kmciLR (see details). 
+The functions return an object of class either \code{\link{kmci}} or \code{\link{kmciLR}} see details). 
 
 both kmci and kmciLR objects are lists, and both contain elements
 %%  ~Describe the value returned
@@ -125,9 +128,9 @@ and results from bpcp additionally have an element
 \item{betaParms}{list with 4 elements of beta parameters associated with the CIs: alower, blower, aupper, bupper} 
 }
 \references{
-Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics (to appear)
-doi: 10.1093/biostatistics/kxt016. (copy available at http://www.niaid.nih.gov/about/organization/dcr/brb/staff/Pages/michael.aspx).  
+Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics 14 (4): 723-736. (copy available at http://www.niaid.nih.gov/about/organization/dcr/brb/staff/Pages/michael.aspx).  
 
+Fay, MP, and Brittain, E (2014). Finite Sample Pointwise Confidence Intervals for a Survival Distribution with Right-Censored Data (unpublished manuscript). 
 
 Barber and Jennison (1999) Biometrics, 55: 430-436.
 
@@ -154,7 +157,7 @@ Michael Fay
 
 %% ~Make other sections like Warning with \section{Warning }{....} ~
 
-%\seealso{%% ~~objects to See Also as \code{\link{help}}, ~~~}
+\seealso{The \code{\link{kmci}} and \code{\link{kmciLR}} objects   have methods: \code{"\link[=plot.kmci]{plot}"},\code{"\link[=lines.kmci]{lines}"}, \code{"\link[=summary.kmci]{summary}"}, \code{"\link[=quantile.kmci]{quantile}"}, and \code{"\link[=median.kmci]{median}"},\code{"\link[=StCI.kmci]{StCI}"}.}
 \examples{
 library(bpcp)
 data(leuk)

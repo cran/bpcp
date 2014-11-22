@@ -14,8 +14,8 @@ bpcp2samp(time, status, group, testtime,
     nullparm = NULL, 
     alternative = c("two.sided", "less", "greater"), 
     conf.level = 0.95, 
-    control = bpcp2sampControl(Delta = 0, 
-       stype = "km", eps = 10^-8))
+    midp=FALSE,
+    control = bpcp2sampControl())
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
@@ -43,6 +43,7 @@ character, either 'two.sided','less', or 'greater'
   \item{conf.level}{
 confidence level, e.g., 0.95
 }
+\item{midp}{logical, do mid-p tests and confidence intervals?}
   \item{control}{
 list of control parameters, see \code{\link{bpcp2sampControl}}
 }
@@ -52,7 +53,12 @@ The melded confidence interval method is a very general procedure to create conf
 we can get confidence intervals on the S2-S1 (\code{parmtype='difference'}), S2/S1 (\code{parmtype='ratio'}), or 
 (S2*(1-S1))/(S1*(1-S2)) (\code{parmtype='oddsratio'}). 
 
-The resulting melded CIs appear to guarantee coverage as long as the one sample confidence intervals from which the melded CIs are derived have guaranteed coverage themselves. So since we use the BPCP for the one sample intervals and they appear to guarantee coverage (see Fay, Brittain, and Proschan, 2013), we expect the melded BPCP intervals to have at least nominal coverage.  For details see Fay, Proschan and Brittain (2014).   
+The resulting melded CIs appear to guarantee coverage as long as the one sample confidence intervals from which the melded CIs are derived have guaranteed coverage themselves. So since we use the BPCP for the one sample intervals and they appear to guarantee coverage (see Fay, Brittain, and Proschan, 2013), we expect the melded BPCP intervals to have at least nominal coverage. Note that when there is no censoring the melded CIs derived from the one-sample BPCPs, give matching inferences to Fisher's exact test (i.e., give theoretically identical p-values) when testing the null hypothesis of equality (S1=S2).  For details see Fay, Proschan and Brittain (2014).   
+
+The original melded CIs focused on combining one sample CIs that that guarantee coverage. We can apply the melding to other CIs as well, such as the mid-p style CIs. The mid-p CIs are not designed to guarantee coverage, but are designed to have close to the nominal coverage 'on average' over all the possible values of the parameters. The usual p-value is derived from Pr[ see observed data or more extreme under null], while the mid p-value version comes from (1/2) Pr[see obs data] + Pr[ see more extreme data]. Mid-p CIs come from inverting the test that uses the mid p-value instead of the usual p-value. 
+
+
+
 }
 \value{
 A list with class "htest" containing the following components:

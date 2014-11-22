@@ -12,8 +12,10 @@ Between 1997 and 2005, a cohort of 34 patients was enrolled in a single arm pilo
 \format{
   A data frame with 34 observations on the following 3 variables.
   \describe{
-    \item{\code{day}}{time to relapse or censoring, in days}
-    \item{\code{year}}{time to relapse or censoring, in years (day/365.25)}
+% first version I had time to relapse, but these data
+% are really time to death, see Fig 5 of Nash
+    \item{\code{day}}{time to death or censoring, in days}
+    \item{\code{year}}{time to death or censoring, in years (day/365.25)}
     \item{\code{status}}{0 is censored, 1 is event}
   }
 }

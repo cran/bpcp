@@ -1,3 +1,104 @@
+meldMC<-function(T1,T2, nullparm=NULL, parmtype=c("difference","oddsratio","ratio"),
+    conf.level=0.95, 
+    alternative=c("two.sided","less","greater"),
+    dname="",estimate1=NA, estimate2=NA){
+
+    ptype<-match.arg(parmtype)
+    if (ptype=="difference"){
+        g<-function(T1,T2){ T2-T1 }
+        if (is.null(nullparm)) nullparm<-0
+    } else if (ptype=="ratio"){
+        g<-function(T1,T2){ T2/T1  }
+        if (is.null(nullparm)) nullparm<-1
+    } else if (ptype=="oddsratio"){
+        g<-function(T1,T2){ T2*(1-T1)/( T1*(1-T2) ) }
+        if (is.null(nullparm)) nullparm<-1
+    }
+
+    lowerLimit<- g(1,0)
+    upperLimit<-g(0,1)
+
+    alt<-match.arg(alternative)
+
+    lower<-upper<-NA
+
+    if (alt=="two.sided"){
+        dolo<-dohi<-TRUE
+        alpha<-(1-conf.level)/2  
+    } else if (alt=="less"){
+        ## alt=less so lower interval is lowest possible, do not calculate
+        dolo<-FALSE
+        lower<- lowerLimit
+        dohi<-TRUE
+        alpha<-1-conf.level
+    } else if (alt=="greater"){
+        # alt=greater so upper interval is highest possible, do not calculate
+        dolo<-TRUE
+        dohi<-FALSE
+        upper<- upperLimit
+        alpha<-1-conf.level
+    } else stop("alternative must be 'two.sided', 'less', or 'greater' ")
+
+    Beta<-g(T1,T2)
+    oBeta<-Beta[order(Beta)]
+    NMC<-length(Beta)
+
+    if (dolo){
+        # see Efron and Tibshirani (1993) Introduction to the Bootstrap,  p. 160, bottom
+        k<-floor((NMC+1)*alpha)
+        if (k==0) warning("increase nmc, confidence limits may be anti-conservative")
+        lower<-oBeta[k]
+        pg<-length(Beta[Beta<=nullparm])/NMC
+    }
+    if (dohi){
+        # see Efron and Tibshirani (1993) Introduction to the Bootstrap,  p. 160, bottom
+        k<-floor((NMC+1)*alpha)
+        if (k==0) warning("increase nmc, confidence limits may be anti-conservative")
+        upper<-oBeta[NMC+1-k]
+        pl<-length(Beta[Beta>=nullparm])/NMC
+
+    }
+
+
+
+    # we do not get estimates from betaParms
+    estimate<-g(estimate1,estimate2)
+    names(estimate)<-ptype
+
+    if (alt=="two.sided"){
+        p.value<- min(1,2*pl,2*pg)
+    } else if (alt=="less"){
+        p.value<- pl
+    } else if (alt=="greater"){
+        p.value<- pg
+    }
+    ci<-c(lower,upper)
+    attr(ci,"conf.level")<-conf.level
+    #dname<-paste("sample 1:(",x1,"/",n1,"), sample 2:(",x2,"/",n2,")",sep="")
+    #dname<-dname
+    #method<-paste("exact melded test for two binomials")
+    method<-"melded test"
+    stat<-estimate1
+    parm<-estimate2
+    names(stat) <- "estimate 1"
+    names(parm) <- "estimate 2"
+    names(nullparm)<-paste("Null",ptype)
+
+    structure(list(statistic = stat, parameter = parm, 
+        p.value = p.value, 
+        conf.int = ci, estimate = estimate, null.value = nullparm, 
+        alternative = alt, method = method, 
+        data.name = dname), class = "htest")
+
+}
+
+
+
+
+
+
+
+
 betaMeldTest <-
 function(betaParms1,
     betaParms2,nullparm=NULL, 
@@ -246,7 +347,9 @@ function(betaParms1,
         } else if (bU1==0 & aL2>0){
             if (conf.int) lower<- g( 1, qbeta(alpha,aL2,bL2) )
             if (ptype=="difference"){
-                pg<- 1-pbeta(1+nullparm,aL2,bL2)
+                # Jul 15 2014: Fix error
+                #pg<- 1-pbeta(1+nullparm,aL2,bL2)
+                pg<- pbeta(1+nullparm,aL2,bL2)
             } else if (ptype=="ratio"){
                 pg<-pbeta(nullparm,aL2,bL2)
             } else if (ptype=="oddsratio"){
@@ -360,19 +463,127 @@ function(betaParms1,
 
 }
 
-bpcp2sampControl<-function(Delta=0, stype="km", eps=10^-8){
+
+
+betaMeldTestMidp.mc <-
+function(betaParms1,
+    betaParms2,nullparm=NULL, 
+    parmtype=c("difference","oddsratio","ratio"),
+    conf.level=0.95, conf.int=TRUE,
+    alternative=c("two.sided","less","greater"),
+    dname="",
+    estimate1=NA, estimate2=NA, nmc=10^6){
+
+    # check betaParms1 and betaParms2 to make sure they
+    # are in the correct format
+    checkBetaParms<-function(betaParm){
+        betaParmNames<-sort(c("alower",
+            "blower","aupper","bupper"))
+        if (is.list(betaParm)){
+            if (!all(sort(names(betaParm))==betaParmNames)){
+                stop("list must have named elements, 
+                   'alower', 'blower', 'aupper', and 'bupper' ")
+            } else if (betaParm$alower<0 |
+                       betaParm$aupper<0 |
+                       betaParm$blower<0 |
+                       betaParm$bupper<0 ) {
+                stop("betaParms cannot have elements less than 0")
+            }
+        } else stop("betaParm should be a list")
+    }
+    checkBetaParms(betaParms1)
+    checkBetaParms(betaParms2)
+
+
+    aL1<-betaParms1$alower
+    aU1<-betaParms1$aupper
+    bL1<-betaParms1$blower
+    bU1<-betaParms1$bupper
+
+
+    aL2<-betaParms2$alower
+    aU2<-betaParms2$aupper
+    bL2<-betaParms2$blower
+    bU2<-betaParms2$bupper
+
+    # sample in a balanced way, so that we always get nmc from aL1, bL1 and nmc from aU1, bU1.
+    # similarly for sample 2
+
+    # rrbeta(n,a,b) is rbeta(n,a,b) but allow limits at 0 for parameters, so that 
+    #      a=0, b>0 gives rep(0,n)  
+    #      a>0, b=0 gives rep(1,n)
+    rrbeta<-function(n,a,b){
+        if (length(a)>1 | length(b)>1) stop("rewrite rrbeta for vector parameters")
+        if (a==0 & b==0){ 
+            out<-rep(NA,n)
+        } else if (a==0){ 
+            out<-rep(0,n)
+        } else if (b==0){ 
+            out<-rep(1,n)
+        } else {
+            out<-rbeta(n,a,b)
+        }
+        out
+    }
+
+
+    T1<-sample(c(rrbeta(ceiling(nmc/2),aL1,bL1),
+                 rrbeta(ceiling(nmc/2),aU1,bU1)), replace=FALSE) 
+    T2<-sample(c(rrbeta(ceiling(nmc/2),aL2,bL2),
+                 rrbeta(ceiling(nmc/2),aU2,bU2)), replace=FALSE) 
+
+    mcout<-meldMC(T1,T2, 
+        nullparm=nullparm,
+        parmtype=parmtype,
+        conf.level=conf.level,
+        alternative=alternative,
+        dname=dname, estimate1=estimate1, estimate2=estimate2)   
+    mcout
+}
+
+
+# Test function
+#x1<-9
+#n1<-15
+#x2<-13
+#n2<-13
+#betaMeldTestMidp.mc(betaParms1=list(alower=x1,blower=n1-x1+1,aupper=x1+1,bupper=n1-x1),
+#    betaParms2=list(alower=x2,blower=n2-x2+1,aupper=x2+1,bupper=n2-x2),nullparm=NULL, 
+#    parmtype=c("difference","oddsratio","ratio"),
+#    conf.level=0.95, conf.int=TRUE,
+#    alternative=c("two.sided","less","greater"),
+#    dname="",
+#    estimate1=NA, estimate2=NA, nmc=10^6)
+
+
+
+
+
+
+
+
+bpcp2sampControl<-function(Delta=0, stype="km", eps=10^-8, nmc=10^6, method="mm.mc", seed=391291){
     if (!(stype=="km" | stype=="mue")) stop("stype should be 'km' or 'mue', see bpcp help")
     if (eps<0 | eps>.1) stop("eps not in reasonable range, see help for betaMeldTest")
     if (Delta<0) stop("Delta is width of grouped confidence intervals, must be greater than 0")
-
-    list(Delta=Delta,stype=stype, eps=eps )
+    is.wholenumber <-  function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
+    if (!is.wholenumber(nmc) | nmc<0) stop("nmc should be a non-negative integer (but can be numeric)")
+    if (!(method=="mm.mc" | method=="mc.mc")) stop("method should be 'mm.mc' (method of moments for 1 sample, Monte Carlo for melding) or 'mc.mc' (MC for both) ") 
+    list(Delta=Delta,stype=stype, eps=eps, nmc=nmc, method=method, seed=seed)
 }
+
+
 
 bpcp2samp<-function(time,status,group, testtime, 
     parmtype=c("difference","oddsratio","ratio"),
     nullparm=NULL,
     alternative=c("two.sided","less","greater"), conf.level=0.95, 
-    control=bpcp2sampControl(Delta=0, stype="km", eps=10^-8)){
+    midp=FALSE, 
+    control=bpcp2sampControl()){
+
+    # so we get the same answer on the same data set
+    # for simulations use control=bpcp2sampControl(seed=NULL)
+    if (!is.null(control$seed)) set.seed(control$seed)
 
     if (class(group)=="factor"){
         # use order of levels, but only keep the levels with data 
@@ -383,69 +594,168 @@ bpcp2samp<-function(time,status,group, testtime,
     ## argument checking
     if (length(ug)!=2) stop("group does not have 2 levels") 
     if ((length(group[group==ug[1]])<1) | (length(group[group==ug[2]])<1)){ 
-        stop("should have at least one observations in each group") }
+        stop("should have at least one observation in each group") }
     if (length(time)!=length(status) | length(time)!=length(group) ) stop("length of time, status and group should be the same")
     if (length(testtime)>1 | !is.numeric(testtime[1]) | testtime[1]<0) stop("testtime must be a vector of length 1")
     ## end of argument checking
-
-
-    I<-group==ug[1]
-    fit1<-bpcp(time[I],status[I],Delta=control$Delta, stype=control$stype)
-    I<-group==ug[2]
-    fit2<-bpcp(time[I],status[I],Delta=control$Delta, stype=control$stype)
-
-    
-    getList<-function(fit,testtime){
-        # get list of results at testtime
-        i<- (fit$L<testtime & testtime<fit$R) |
-            (fit$L<=testtime & fit$Lin & testtime<fit$R) | 
-            (fit$L<testtime  & testtime<=fit$R & fit$Rin) |
-            (fit$L<=testtime & fit$Lin & testtime<=fit$R & fit$Rin)
-        if (length(i[i])!=1) stop("at testtime not picking one interval from fit")
-        out<-list(estimate=fit$surv[i],
-             betaParms=list(
-                alower=fit$betaParms$alower[i],
-                blower=fit$betaParms$blower[i],
-                aupper=fit$betaParms$aupper[i],
-                bupper=fit$betaParms$bupper[i]))
-        out
-    }
-    list1<-getList(fit1,testtime)
-    list2<-getList(fit2,testtime)
 
     ## to avoid problems with same name of argument and value, rename some objects
     Nullparm<-nullparm
     CL<-conf.level
     alt<-match.arg(alternative)
-
+    
     ptype<-match.arg(parmtype)
     if (ptype=="difference"){
-        Dname<-paste("S(",testtime,";group=",ug[2],")-S(",testtime,";group=",ug[1],")",sep="")
+      Dname<-paste("S(",testtime,";group=",ug[2],")-S(",testtime,";group=",ug[1],")",sep="")
     } else if (ptype=="ratio"){
-        Dname<-paste("S(",testtime,";group=",ug[2],")/S(",testtime,";group=",ug[1],")",sep="")
+      Dname<-paste("S(",testtime,";group=",ug[2],")/S(",testtime,";group=",ug[1],")",sep="")
     } else if (ptype=="oddsratio"){
-        Dname<-paste("odds[S(",testtime,";group=",ug[2],")]/odds[S(",testtime,";group=",ug[1],")]",sep="")
+      Dname<-paste("odds[S(",testtime,";group=",ug[2],")]/odds[S(",testtime,";group=",ug[1],")]",sep="")
     }
+    
+    # regardless of method, need estimate, so run fastest (nmc=0) for single sample
+    I<-group==ug[1]
+    fit1<-bpcp(time[I],status[I],Delta=control$Delta, stype=control$stype, midp=midp)
+    I<-group==ug[2]
+    fit2<-bpcp(time[I],status[I],Delta=control$Delta, stype=control$stype, midp=midp)
+      
+      
+    getList<-function(fit,testtime){
+      # get list of results at testtime
+      i<- (fit$L<testtime & testtime<fit$R) |
+        (fit$L<=testtime & fit$Lin & testtime<fit$R) | 
+        (fit$L<testtime  & testtime<=fit$R & fit$Rin) |
+        (fit$L<=testtime & fit$Lin & testtime<=fit$R & fit$Rin)
+      if (length(i[i])!=1) stop("at testtime not picking one interval from fit")
+      out<-list(estimate=fit$surv[i],
+                betaParms=list(
+                  alower=fit$betaParms$alower[i],
+                  blower=fit$betaParms$blower[i],
+                  aupper=fit$betaParms$aupper[i],
+                  bupper=fit$betaParms$bupper[i]))
+      out
+    }
+    list1<-getList(fit1,testtime)
+    list2<-getList(fit2,testtime)
 
-    testout<-betaMeldTest(betaParms1=list1$betaParms,
-        betaParms2=list2$betaParms,
-        nullparm=Nullparm,
-        parmtype=ptype,
-        conf.level=CL,
-        alternative=alt,
-        eps=control$eps,
-        dname=Dname,
-        estimate1=list1$estimate,
-        estimate2=list2$estimate)
+    
+    if (control$method=="mm.mc"){  
+      if (midp){
+        testout<-betaMeldTestMidp.mc(betaParms1=list1$betaParms,
+                              betaParms2=list2$betaParms,
+                              nullparm=Nullparm,
+                              parmtype=ptype,
+                              conf.level=CL,
+                              alternative=alt,
+                              dname=Dname,
+                              estimate1=list1$estimate,
+                              estimate2=list2$estimate,
+                              nmc=control$nmc)  
+      } else {
+        testout<-betaMeldTest(betaParms1=list1$betaParms,
+                              betaParms2=list2$betaParms,
+                              nullparm=Nullparm,
+                              parmtype=ptype,
+                              conf.level=CL,
+                              alternative=alt,
+                              eps=control$eps,
+                              dname=Dname,
+                              estimate1=list1$estimate,
+                              estimate2=list2$estimate)  
+      }
+    } else if (control$method=="mc.mc"){
+        if (midp){
+            I<-group==ug[1] 
+            x1<-kmgw.calc(time[I],status[I],keepCens=TRUE)
+            mc1<-bpcp.mc(x1,nmc=control$nmc,testtime=testtime,DELTA=control$Delta, midp=TRUE)
+            I<-group==ug[2]
+            x2<-kmgw.calc(time[I],status[I],keepCens=TRUE)
+            mc2<-bpcp.mc(x2,nmc=control$nmc,testtime=testtime,DELTA=control$Delta, midp=TRUE)
+            testout<-meldMC(c(mc1$Smc$Slo,mc1$Smc$Shi), c(mc2$Smc$Slo,mc2$Smc$Shi),
+                              nullparm=Nullparm,
+                              parmtype=ptype,
+                              conf.level=CL,
+                              alternative=alt,
+                              dname=Dname,
+                              estimate1=list1$estimate,
+                              estimate2=list2$estimate) 
+
+        } else {
+            # midp=FALSE
+            I<-group==ug[1] 
+            x1<-kmgw.calc(time[I],status[I],keepCens=TRUE)
+            mc1<-bpcp.mc(x1,nmc=control$nmc,testtime=testtime,DELTA=control$Delta, midp=FALSE)
+            I<-group==ug[2]
+            x2<-kmgw.calc(time[I],status[I],keepCens=TRUE)
+            mc2<-bpcp.mc(x2,nmc=control$nmc,testtime=testtime,DELTA=control$Delta, midp=FALSE)
+            if (alt=="two.sided"){
+                dolo<-dohi<-TRUE
+                alpha<-(1-conf.level)/2  
+            } else if (alt=="less"){
+                ## alt=less so lower interval is lowest possible, do not calculate
+                dolo<-FALSE
+                dohi<-TRUE
+                alpha<-1-conf.level
+            } else if (alt=="greater"){
+                # alt=greater so upper interval is highest possible, do not calculate
+                dolo<-TRUE
+                dohi<-FALSE
+                alpha<-1-conf.level
+            } else stop("alternative must be 'two.sided', 'less', or 'greater' ")
+
+            if (dolo){
+                # take Shi from group 1, and Slo from group 2
+                testout.lo<-meldMC(c(mc1$Smc$Shi), c(mc2$Smc$Slo),
+                              nullparm=Nullparm,
+                              parmtype=ptype,
+                              conf.level=1-alpha,
+                              alternative="greater",
+                              dname=Dname,
+                              estimate1=list1$estimate,
+                              estimate2=list2$estimate) 
+            } 
+            if (dohi){
+                # take Slo from group 1, and Shi from group 2
+                testout.hi<-meldMC(c(mc1$Smc$Slo), c(mc2$Smc$Shi),
+                              nullparm=Nullparm,
+                              parmtype=ptype,
+                              conf.level=1-alpha,
+                              alternative="less",
+                              dname=Dname,
+                              estimate1=list1$estimate,
+                              estimate2=list2$estimate) 
+            } 
+            if (alt=="two.sided"){
+                testout<-testout.lo
+                # two.sided p-value is min(1,2*plower,2*pupper)
+                testout$p.value<-min(1,2*testout.lo$p.value,2*testout.hi$p.value)
+                testout$conf.int<-c(testout.lo$conf.int[1],testout.hi$conf.int[2])
+                testout$alternative<-alt
+            } else if (alt=="less"){
+                testout<-testout.hi
+            } else if (alt=="greater"){
+                testout<-testout.lo
+            }
+        }
+    } else stop("control()$method should equal 'mm.mc' or 'mc.mc' ")
+
     testout$method<-"Two-Sample Melded BPCP Test"
+    if (midp) testout$method<- "Two-Sample Melded BPCP Test (mid-p version)"
     names(testout$statistic)<-paste("S(",testtime,";group=",ug[1],")",sep="")
     names(testout$parameter)<-paste("S(",testtime,";group=",ug[2],")",sep="")
     testout
 
 }
 
-#plot(survfit(Surv(time,status)~treatment,data=leuk2),conf.int=TRUE)
-#bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,35,parmtype="oddsratio")
+#kmgw.calc(1:10,c(1,1,0,1,0,1,1,0,1,1),keepCens=TRUE)
+
+#bpcp2samp(c(1,3,5,4,9,2,7.1,9.5,8,10),rep(1,10),c(rep(1,6),rep(2,4)),5,control=bpcp2sampControl(method="mc.mc"),midp=FALSE)
+#bpcp2samp(c(1,3,5,4,9,2,7.1,9.5,8,10),rep(1,10),c(rep(1,6),rep(2,4)),5,control=bpcp2sampControl(method="mm.mc"),midp=FALSE)
+#bpcp2samp(c(1,3,5,4,9,2,7.1,9.5,8,10),rep(1,10),c(rep(1,6),rep(2,4)),5,control=bpcp2sampControl(method="mc.mc"),parmtype="oddsratio",midp=FALSE)
+#bpcp2samp(c(1,3,5,4,9,2,7.1,9.5,8,10),rep(1,10),c(rep(1,6),rep(2,4)),5,control=bpcp2sampControl(method="mm.mc"),parmtype="oddsratio",midp=FALSE)
+#bpcp2samp(c(1,3,5,4,9,2,7.1,9.5,8,10),rep(1,10),c(rep(1,6),rep(2,4)),5,control=bpcp2sampControl(method="mc.mc"),parmtype="ratio",midp=FALSE)
+#bpcp2samp(c(1,3,5,4,9,2,7.1,9.5,8,10),rep(1,10),c(rep(1,6),rep(2,4)),5,control=bpcp2sampControl(method="mm.mc"),parmtype="ratio",midp=FALSE)
+
 
 
 

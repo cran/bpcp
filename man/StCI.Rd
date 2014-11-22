@@ -22,16 +22,17 @@
 \item{\dots}{further arguments to be passed to or from methods.}
 }
 \details{Since the Kaplan-Meier estimator is undefined after the last observation if it is censored and many confidence interval methods are not defined there either, 
-we need to explicitly define what to do. The \code{afterMax} has three options for this: 'continue' (keep surv and ci values the same as the last calculated one), 
-'zero' (surv and lower go to zero, upper stays same), 
+we need to explicitly define what to do. (For objects of the kmciLR class, the confidence intervals are defined over the positive real line and the \code{afterMax} is ignored.) The \code{afterMax} has four options for this: 'continue' (keep surv and ci values the same as the last calculated one), 
+'zero' (surv and lower go to zero, upper stays same), 'zeroNoNA'
+(surv and lower go to zero, upper stays same unless it is NA, then it takes on the last non-missing upper value), 
 'half' (surv goes to half value, lower goes to zero, upper stays same).
 }
 \value{
-	The function \code{StCI} returns a data frame with the following variables.
+	The function \code{StCI} returns a data frame with the following variables. (It also has an attribute: 'conf.level'). 
 \item{time}{this is tstar}
 \item{survival}{survival at tstar}
-\item{lower 95 CL}{lower limit at tstar, name changes if different level}
-\item{upper 95 CL}{upper limit at tstar, name changes if different level}
+\item{lower}{lower confidence limit at tstar}
+\item{upper}{upper confidence limit at tstar}
 }
 %\references{  }
 \author{Michael Fay

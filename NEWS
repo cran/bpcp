@@ -1,3 +1,18 @@
+
+
+
+CHANGES in `bpcp' VERSION 1.2-4
+-added another option for afterMax argument in the StCI function to handle NA for the last confidence interval estimates.
+-changed help for sclerosis data set. The event is death not relapse (see Figure 5 of Nash, et al 2007). 
+- change qqbeta to use qbeta if using R Version>=3.1.1. 
+-fixed a bug with bpcp2samp when there is no events in one of the groups.
+-added comments to kmciFunctions.R file
+- added mid-p option to the bpcp and bpcp2samp functions. This allows mid-p-like confidence intervals. These are more close to having the coverage equal to the nominal coverage on average over all the possible parameter values, but do not guarantee nominal coverage for any specific parameter value. 
+- fixed StCI so that the output data.frame has variables named 'lower' and 'upper' instead of 'lower 95 CL' and 'upper 95 CL'. Since the latter names would change if the conf.level changed, this was causing unnecessary warnings (for example in kmtestALL). 
+
+CHANGES in `bpcp' VERSION 1.1-1
+ - modify kmgw.calc so that it (and bpcp) will not produce NAs from integer overflow when you have a very large number of observations (thanks to Robert Scott for pointing this out). 
+
 CHANGES in `bpcp' VERSION 1.1-0
 - modify output for bpcp so that it outputs beta parameters associated with method of moments implementation. 
   This is needed for testing at fixed time points in the two sample case using the bpcp2samp function.

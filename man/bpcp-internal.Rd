@@ -8,10 +8,13 @@
 \alias{kmConstrainBeta.calc}
 \alias{bpcp.mm}
 \alias{bpcp.mc}
+\alias{bpcpMidp.mm}
 \alias{getmarks}
 \alias{getmarks.x}
 \alias{intChar}
 \alias{citoLR}
+\alias{meldMC}
+\alias{betaMeldTestMidp.mc}
 
 \alias{borkowf.calc}
 
@@ -33,7 +36,8 @@ borkowf.calc(x, type = "log", alpha = 0.05)
 kmConstrain(tstar, pstar, x, alpha = 0.05)
 kmConstrainBeta.calc(tstar, pstar, x, alpha = 0.05)
 bpcp.mm(x,alpha=0.05)
-bpcp.mc(x,nmc=100,alpha=0.05)
+bpcp.mc(x,nmc=100,alpha=0.05, testtime=0, DELTA=0, midp=FALSE)
+bpcpMidp.mm(x,alpha=0.05)
 kmcilog(x, alpha = 0.05)
 
 qqbeta(x, a, b)
@@ -46,6 +50,22 @@ getmarks.x(x)
 
 
 intChar(L, R, Lin = rep(FALSE, length(L)), Rin = rep(TRUE, length(L)), digits = NULL)
+
+
+meldMC(T1,T2, nullparm=NULL, 
+    parmtype=c("difference","oddsratio","ratio"),
+    conf.level=0.95, 
+    alternative=c("two.sided","less","greater"),
+    dname="",estimate1=NA, estimate2=NA)
+
+betaMeldTestMidp.mc(betaParms1,
+    betaParms2,nullparm=NULL, 
+    parmtype=c("difference","oddsratio","ratio"),
+    conf.level=0.95, conf.int=TRUE,
+    alternative=c("two.sided","less","greater"),
+    dname="",
+    estimate1=NA, estimate2=NA, nmc=10^6)
+
 
 }
 %- maybe also 'usage' for other objects documented here.
@@ -66,6 +86,9 @@ intChar(L, R, Lin = rep(FALSE, length(L)), Rin = rep(TRUE, length(L)), digits = 
   \item{thetaParm}{logical, is theta a parameter?}
   \item{interval}{either a confidence interval (if thetaParm=TRUE) or quantiles from a null distribution (if thetaParm=FALSE)}
   \item{alpha}{1-conf.level}
+ \item{testtime}{time for test, needed for output for two-sample test}
+\item{midp}{logical, do mid-p tests and/or confidence intervals?}
+\item{DELTA}{same at Delta in bpcp}
   \item{tstar}{time for survival distribution}
   \item{pstar}{null value for survival}
   \item{type}{character describing method, either 'log' transformation, 'logs' log transformation with shift, 'norm' no transformation, 'norms' no transformation with shift }
@@ -75,7 +98,18 @@ intChar(L, R, Lin = rep(FALSE, length(L)), Rin = rep(TRUE, length(L)), digits = 
 \item{Lin}{logical vector, include left end in interval?}
 \item{Rin}{logical vector, include right end in  interval?}
 \item{digits}{how many significant digits to use}
-
+\item{T1}{vector of nmc simulated values for parameter from group 1}
+\item{T2}{vector of nmc simulated values for parameter from group 2}
+\item{nullparm}{null value of the 2 sample parameter, when NULL gives values appropriate for parmtype}
+\item{parmtype}{type of parameter for the two sample test}
+\item{conf.level}{confidence level}
+\item{conf.int}{logical, calculate confidence interval?}
+\item{alternative}{alternative hypothesis}
+\item{dname}{data name for 'htest' class of the result}
+\item{estimate1}{estimate of parameter from group 1}
+\item{estimate2}{estimate of parameter from group 2}
+\item{betaParms1}{named list of beta parameters from group 1 (usually come from method of moments), names: alower,blower, aupper, bupper}
+\item{betaParms2}{named list of beta parameters from group 2, names: alower,blower, aupper, bupper}
 }
 \details{
 abmm uses method of moments to find a,b parameters from beta distribution that is product of two other beta RVs.   
@@ -90,7 +124,7 @@ borkowf.calc calculates the Borkowf intervals from output from kmgw.calc.
 kmcilog gives normal approximation confidence interval using log transformation.
 
 bpcp.mm and bpcp.mc are the main calculation functions (.mm for method of moments, .mc for Monte Carlo simulation) 
-for bpcp (repeated Beta method). Both output a list with two vectors, upper and lower.
+for bpcp (repeated Beta method). Both output a list with two vectors, upper and lower. bpcpMidp.mm and bpcpMidp.mc are the mid-p versions of these functions. 
 
 kmConstrain gives constrained K-M estimate, and kmConstrainBeta.calc gives ci and tests using Beta distribution. 
  
