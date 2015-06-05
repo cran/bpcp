@@ -613,9 +613,10 @@ bpcp2samp<-function(time,status,group, testtime,
       Dname<-paste("odds[S(",testtime,";group=",ug[2],")]/odds[S(",testtime,";group=",ug[1],")]",sep="")
     }
     
-    # regardless of method, need estimate, so run fastest (nmc=0) for single sample
+    # regardless of method, need estimate, so run 
+    # fastest (nmc=0) for single sample
     I<-group==ug[1]
-    fit1<-bpcp(time[I],status[I],Delta=control$Delta, stype=control$stype, midp=midp)
+    fit1<-bpcp(time[I],status[I],Delta=control$Delta,                    stype=control$stype, midp=midp)
     I<-group==ug[2]
     fit2<-bpcp(time[I],status[I],Delta=control$Delta, stype=control$stype, midp=midp)
       

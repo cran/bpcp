@@ -1,10 +1,8 @@
-Figure3     Plots Kaplan-Meier together with several confidence interval for Nash et al data
-
-Figure4     Plots Kaplan-Meier together with 2 confidence intervals for National Wilms Tumor data
-
-Simulation     Does most of Simulations for paper (except unconstrained bootstrap). Actual simulations took over a week to run. See code to set number of reps.
-
-SimulationBootOnly     Does Unconstrained bootstrap Simulation for paper. Requested by reviewer, and done after initial submission.
-
+FigureSclerosis     (Fig 1 of Fay, Brittain, Proschan, 2013.) Plots Kaplan-Meier together with several confidence interval for Nash et al data
+FigureWilms     (Fig 3 of Fay, Brittain, Proschan, 2013.) Plots Kaplan-Meier together with 2 confidence intervals for National Wilms Tumor data
+Simulation2013     Does most of Simulations for Fay, Brittain, Proschan (2013, Biostatistics, 723-736) (except unconstrained bootstrap). Actual simulations took over a week to run. See code to set number of reps.
+SimulationBootOnly2013     Does Unconstrained bootstrap Simulation for Fay, Brittain, Proschan (2013). Requested by reviewer, and done after initial submission. 
+NotesMMandMC       Script for producing the figures in the Notes on method of moments and Monte carlo methods for calculating BPCP.
+Simulation2015     Simulations for Fay Brittain (2015, unpublished), which used monotonic option and included mid-p version. Took several days to run.
 
 

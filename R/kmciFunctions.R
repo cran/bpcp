@@ -1154,6 +1154,7 @@ bpcp.mm<-function(x,alpha=.05){
                 lower[(3*j-2)]<-qbeta(alpha/2,abtemp$a,abtemp$b)
                 alower[(3*j-2)]<-abtemp$a
                 blower[(3*j-2)]<-abtemp$b
+                # Note: if x$di[j]==0 then a and b do not change
                 ab<-abmm(a,b,x$ni[j] - x$di[j] + 1,x$di[j])
                 a<-ab$a
                 b<-ab$b
@@ -1206,7 +1207,7 @@ bpcp.mm<-function(x,alpha=.05){
 
 
 
-bpcpMidp.mm<-function(x,alpha=0.05){
+bpcpMidp.mm<-function(x,alpha=0.05,midptol=.Machine$double.eps^0.25){
     ## first calculate the usual bpcp.mm
     z<- bpcp.mm(x,alpha=alpha)
     ## extract a and b Beta parameters for lower and upper
@@ -1252,11 +1253,11 @@ bpcpMidp.mm<-function(x,alpha=0.05){
              lower[i]<-lower[i-1]
              upper[i]<-upper[i-1]
          } else {
-             lowerRoot<-uniroot(lowerRootFunc,interval=c(-alpha/2,alpha/2),i=i)$root
+             lowerRoot<-uniroot(lowerRootFunc,interval=c(-alpha/2,alpha/2),i=i,tol=midptol)$root
              # see paper, we want Q(alpha1,a1,b1)=Q(alpha2,ab,b2), where alpha1+alpha2=alpha
              # so we solve that using uniroot, then Pr[W<=Q]=alpha/2
              lower[i]<-qqbeta(alpha/2-lowerRoot,a1[i],b1[i])
-             upperRoot<-uniroot(upperRootFunc,interval=c(-alpha/2,alpha/2),i=i)$root
+             upperRoot<-uniroot(upperRootFunc,interval=c(-alpha/2,alpha/2),i=i,tol=midptol)$root
              upper[i]<-qqbeta(1-alpha/2-upperRoot,a1[i],b1[i])
          }
     
@@ -1355,12 +1356,27 @@ bpcp.mc<-function(x,nmc=100,alpha=.05, testtime=0, DELTA=0, midp=FALSE){
 #max( abs(outmm$upper-out$upper) )
 
 
+bpcpControl<-function(midpMMTol=.Machine$double.eps^0.25, seed=49911){
+    # if you put seed=NA change it to seed=NULL
+    if (!is.null(seed) & is.na(seed)){ seed<-NULL } 
+    list(midpMMTol=midpMMTol,seed=seed)
+}
 
 
 
-
-
-bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE){
+bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE, monotonic=NULL, control=bpcpControl()){
+    if (is.null(monotonic)){
+        if (nmc==0){
+            monotonic<-TRUE
+        } else {
+            monotonic<-FALSE
+        }
+    }
+    midpMMTol<-control$midpMMTol
+    # so we get the same answer with the same data set, 
+    # default to set seed...control$seed=NULL is for
+    # simulations on Monte Carlo
+    if (nmc>0 & !is.null(control$seed)) set.seed(control$seed)
     ##
     ## get Kaplan-Meier and Greenwood variances
     x<-kmgw.calc(time,status,keepCens=TRUE)
@@ -1382,7 +1398,7 @@ bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE){
     Rin<-c(rep(c(TRUE,FALSE,TRUE),k),FALSE)
 
     if (midp){
-        if (nmc==0){ hilo<-bpcpMidp.mm(x,alpha=alpha)
+        if (nmc==0){ hilo<-bpcpMidp.mm(x,alpha=alpha,midptol=midpMMTol)
         } else hilo<-bpcp.mc(x,nmc,alpha,midp=TRUE)
     } else {
         if (nmc==0){ hilo<-bpcp.mm(x,alpha=alpha)
@@ -1445,9 +1461,15 @@ bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE){
         blower=hilo$blower[keep],
         aupper=hilo$aupper[keep],
         bupper=hilo$bupper[keep])
+    lower<-hilo$lower[keep]
+    upper<-hilo$upper[keep]
+    if (monotonic){
+        lower<-cummin(lower)
+        upper<-cummin(upper)
+    }
     out<-list(cens=getmarks(time,status),surv=SURV,
-        lower=hilo$lower[keep],
-        upper=hilo$upper[keep],
+        lower=lower,
+        upper=upper,
         L=L[keep],Lin=Lin[keep],R=R[keep],Rin=Rin[keep],
         Interval=intChar(L,R,Lin,Rin)[keep],stype=stype, 
         betaParms=betaParms, conf.level=1-alpha)

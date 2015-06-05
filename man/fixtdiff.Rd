@@ -32,7 +32,7 @@ fixed time when you want to test for a difference
 \item{doall}{logical, do all transformations and corrections}
 }
 \details{
-This function provides p-values for the two sample tests that the survival distributions are equal at time \code{testtime}. The tests are asymptotically normal tests and are described in Klein, et al (2007). These functions are mostly for simulations to evaluate the melded BPCP tests, see \code{\link{bpcp2samp}} and Fay et al (2014).  
+This function provides p-values for the two sample tests that the survival distributions are equal at time \code{testtime}. The tests are asymptotically normal tests and are described in Klein, et al (2007). These functions are mostly for simulations to evaluate the melded BPCP tests, see \code{\link{bpcp2samp}} and Fay et al (2015).  
 }
 \value{
 A list with the following components:
@@ -41,7 +41,7 @@ A list with the following components:
 \item{p2}{two-sided p-value, min(1,2*plo,2*phi)}
 }
 \references{
-Fay, MP, Proschan, MA, and Brittain, E (2014) Combining One Sample Confidence Procedures for Inferences in the Two Sample Case (unpublished manuscript). 
+Fay, MP, Proschan, MA, and Brittain, E (2015) Combining One Sample Confidence Procedures for Inferences in the Two Sample Case. Biometrics 71:146-156. 
 
 Fleiss, Levin, Paik (2003) Statistical Methods for Rates and Proportions, 3rd edition.
 

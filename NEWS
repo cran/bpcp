@@ -1,5 +1,13 @@
 
 
+CHANGES in `bpcp' VERSION 1.2-5
+- added a seed argument to the bpcpControl. Now the default is to set the seed for the Monte Carlo method so that the same data set will give the same answer.
+- changed the names of the demo files and added a simulation script for the Fay and Brittain (2015) paper.
+- added a pdf doc to show different calculation methods on two data sets. 
+- added monotonic option to bpcp function to ensure monotonicity of lower and upper limits in time, and made it the default when using Method of Moments.
+- added control for passing tol argument to uniroot used in bpcp function when midp=TRUE and nmc=0.
+- set keyword=internal for internal functions to hide internal function help
+- updated citation file
 
 CHANGES in `bpcp' VERSION 1.2-4
 -added another option for afterMax argument in the StCI function to handle NA for the last confidence interval estimates.

@@ -21,7 +21,8 @@ The other confidence intervals are included primarily to show that the beta prod
 See details for a description of all the methods.
 }
 \usage{
-bpcp(time,status,nmc=0,alpha=.05,Delta=0,stype="km",midp=FALSE)
+bpcp(time,status,nmc=0,alpha=.05,Delta=0,stype="km",midp=FALSE,
+    monotonic=NULL, control=bpcpControl())
 
 
 kmciBorkowf(time, status, type="log", alpha = 0.05)
@@ -50,6 +51,10 @@ time to event or censoring
 \item{Delta}{width of grouped confidence intervals, defaults to 0}
 \item{stype}{type of survival estimate, either "km" for Kaplan-Meier or "mue" for median unbiased estimator} 
 \item{midp}{logical, calculate the mid-p type of interval?}
+\item{monotonic}{logical, force lower and upper confidence limits to be monotonic over time? If NULL: nmc=0 gives TRUE, nmc>0 gives FALSE} 
+\item{control}{list with arguments for adjusting numeric calculation. Generally does not need to be changed. See 
+\code{\link{bpcpControl}}
+}
   \item{tstar}{ time to test survival distribution}
   \item{pstar}{null survival distribution}
   \item{M}{number of bootstrap replications}
@@ -61,12 +66,10 @@ time to event or censoring
 }
 \details{ 
 
-The beta product confidence procedure will give pointwise confidence intervals for right censored data with the following properties. When there is no censoring 
-or Progressive Type II censoring the BPCP guarantees central coverage (e.g., the error rate on either side of the 95 percent confidence interval is guaranteed to be less than 2.5 percent). 
-For general independent censoring the BPCP is asymptotically equivalent to standard methods such as the normal approximation with Greenwood variance, and 
+The standard beta product confidence procedure (i.e., with midp=FALSE) will give pointwise confidence intervals for right censored data with the following properties. When there is no censoring or Progressive Type II censoring the BPCP guarantees central coverage (e.g., the error rate on either side of the 95 percent confidence interval is guaranteed to be less than 2.5 percent). For general independent censoring the BPCP is asymptotically equivalent to standard methods such as the normal approximation with Greenwood variance, and 
 hence the BPCP (as with the other confidence interval given here) goes to the correct confidence interval for any t.   
 
-There is also a mid-p version of the BPCP. The BPCP is derived from using the known distribution of the failure times, and acting conservatively between the failure times (see Fay, Brittain, and Proschan, 2013 for details). Instead of acting conservatively between the failure times, the midp=TRUE version combines the distributions for the previous failure and the future failure time (see Fay and Brittain, 2014). 
+There is also a mid-p version of the BPCP. The BPCP is derived from using the known distribution of the failure times, and acting conservatively between the failure times (see Fay, Brittain, and Proschan, 2013 for details). Instead of acting conservatively between the failure times, the midp=TRUE version combines the distributions for the previous failure and the future failure time (see Fay and Brittain, 2015). 
 
 Now we describe the other methods. 
 In general the functions are of three naming types: kmtestXX, kmci1XX and kmciXX, where XX changes for different methods. 
@@ -130,7 +133,7 @@ and results from bpcp additionally have an element
 \references{
 Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics 14 (4): 723-736. (copy available at http://www.niaid.nih.gov/about/organization/dcr/brb/staff/Pages/michael.aspx).  
 
-Fay, MP, and Brittain, E (2014). Finite Sample Pointwise Confidence Intervals for a Survival Distribution with Right-Censored Data (unpublished manuscript). 
+Fay, MP, and Brittain, E (2015). Finite Sample Pointwise Confidence Intervals for a Survival Distribution with Right-Censored Data (unpublished manuscript). 
 
 Barber and Jennison (1999) Biometrics, 55: 430-436.
 

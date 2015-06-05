@@ -37,7 +37,7 @@ kmConstrain(tstar, pstar, x, alpha = 0.05)
 kmConstrainBeta.calc(tstar, pstar, x, alpha = 0.05)
 bpcp.mm(x,alpha=0.05)
 bpcp.mc(x,nmc=100,alpha=0.05, testtime=0, DELTA=0, midp=FALSE)
-bpcpMidp.mm(x,alpha=0.05)
+bpcpMidp.mm(x,alpha=0.05, midptol=.Machine$double.eps^0.25)
 kmcilog(x, alpha = 0.05)
 
 qqbeta(x, a, b)
@@ -88,6 +88,7 @@ betaMeldTestMidp.mc(betaParms1,
   \item{alpha}{1-conf.level}
  \item{testtime}{time for test, needed for output for two-sample test}
 \item{midp}{logical, do mid-p tests and/or confidence intervals?}
+\item{midptol}{tol value passed to uniroot in function}
 \item{DELTA}{same at Delta in bpcp}
   \item{tstar}{time for survival distribution}
   \item{pstar}{null value for survival}
@@ -150,5 +151,5 @@ uvab takes means and variances of beta distributions and returns shape parameter
 %\examples{}
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-%\keyword{ ~kwd1 }
+\keyword{internal}
 %\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
