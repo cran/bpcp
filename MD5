@@ -1,8 +1,8 @@
-20f7fc8fdffc6aeb5c29096f3f37726c *DESCRIPTION
-1f40fb129f712e5d0782f866a8c59979 *NAMESPACE
-a64d594c574f12e7e70d4216dcbeb0ef *NEWS
+d34d6f786e9971c366c84b0c772689ef *DESCRIPTION
+e3c4f2bb200982741c94a4821c0901eb *NAMESPACE
+f5ab5eb11bc78b6ae74ff5ed8def0274 *NEWS
 0a5a1964fbb93535d014048799582115 *R/bpcp2sample.R
-a4731c5871b0ef996c44a028f7391693 *R/kmciFunctions.R
+0b5f58596747f8014177ec3459a86198 *R/kmciFunctions.R
 98038168d4726db66dfe355fb6c99ebd *R/mdiffmedian.test.R
 87fbe89b579380046459ef836e18b408 *data/leuk.rda
 ea356e305d91d66315d7cec570eeee29 *data/leuk2.rda
@@ -19,7 +19,7 @@ ace917b074377cc1e753e1006f09bbdd *inst/doc/NotesMMandMC.pdf
 faf9ee7c893520a4f676c52027264365 *man/StCI.Rd
 287b1ae217d73c25e8aedb1174b757bf *man/betaMeldTest.Rd
 c8629317bc1cc14346ce74c6e05477fa *man/bpcp-internal.Rd
-090e3df1129cf5033afcb56a93246099 *man/bpcp-package.Rd
+ffc0b27d615c8fa19b77cea7cbe23eae *man/bpcp-package.Rd
 b0cec85f0e268d619c7f57ca4664aafc *man/bpcp2samp.Rd
 93ebec1cc95835c60bd83bdf1d1f3264 *man/bpcp2sampControl.Rd
 59c45fd8eaca62f6e69e5922728afb75 *man/bpcpControl.Rd

@@ -4,7 +4,10 @@ kmcilog,intChar,borkowf.calc,getmarks,getmarks.x,
 kmciBorkowf,kmci1TG,kmciTG,kmciSW,kmConstrain,rejectFromInt,kmConstrainBeta.calc,kmtestConstrainBeta,kmtestConstrainBoot,
 kmciSW,kmtestALL,citoLR,StCI, bpcp2samp, betaMeldTest, betaMeldTestMidp.mc, meldMC, bpcp2sampControl, fixtdiff, mdiffmedian.test,bpcpControl)
 
-importFrom(stats,median,quantile)
+#importFrom(stats,median,quantile)
+importFrom("graphics", "segments", "points")
+importFrom("grDevices", "gray")
+importFrom("stats", "median","quantile","pbeta", "dbeta", "qbeta", "integrate", "uniroot", "rbeta", "qnorm", "pnorm", "qchisq", "pbinom")
 
 S3method(plot,kmci)
 S3method(lines,kmci)

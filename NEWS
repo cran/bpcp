@@ -1,4 +1,6 @@
-
+CHANGES in `bpcp' VERSION 1.2-6
+-change error message so that it is more clear when there are negative times.
+- fix NAMESPACE so that it imports even from packages that are included in the R release
 
 CHANGES in `bpcp' VERSION 1.2-5
 - added a seed argument to the bpcpControl. Now the default is to set the seed for the Monte Carlo method so that the same data set will give the same answer.

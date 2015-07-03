@@ -1382,7 +1382,7 @@ bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE, monot
     x<-kmgw.calc(time,status,keepCens=TRUE)
     k<-length(x$time)
     minTimeDiff<-min(diff(c(0,x$time)))
-    if (minTimeDiff<Delta) stop("Delta must be less or equal to the minimum difference in times")
+    if (minTimeDiff<Delta) stop("Either negative times or Delta is not less than or equal to the minimum difference in times")
 
     ## each time, t_j, represents 3 intervals
     ## (t_{j-1},t_j-Delta]
