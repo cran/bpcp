@@ -1,5 +1,11 @@
+CHANGES in `bpcp' VERSION 1.3.0
+- major change in the way confidence intervals at observed failures are handled. See vignette on Discrete data and bpcp. Because it only changes the CIs exactly at the failure times, results from simulations done with continuous failure time distributions will not change. 
+- fixed errors in the way Delta>0 was handled in bpcp. 
+- change getmarks functions so they get censoring marks when there are failures at that time also. This fixes an error in the lines.kmciLR when there was censoring but only at times when there was also failures. 
+- change default color for the survival line in lines.kmciLR, it was gray(1) (i.e., white), I meant for it to be gray(0) (i.e., black).
+
 CHANGES in `bpcp' VERSION 1.2-6
--change error message so that it is more clear when there are negative times.
+- change error message so that it is more clear when there are negative times.
 - fix NAMESPACE so that it imports even from packages that are included in the R release
 
 CHANGES in `bpcp' VERSION 1.2-5

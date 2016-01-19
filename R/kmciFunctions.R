@@ -183,11 +183,17 @@ intChar<-function(L,R,Lin=rep(FALSE,length(L)),
 # get marks for right censoring times
 getmarks<-function(time,status){
     x<-kmgw.calc(time,status)
-    x$time[x$ci>0 & x$di==0]
+    ## fix July 29, 2015: get marks when there is 
+    ## failure there also
+    #x$time[x$ci>0 & x$di==0]
+    x$time[x$ci>0]
 }
 ## save time if already have the results from kmgw.calc, use 
 getmarks.x<-function(x){
-    x$time[x$ci>0 & x$di==0]
+    ## fix July 29, 2015: get marks when there is 
+    ## failure there also
+    #x$time[x$ci>0 & x$di==0]
+    x$time[x$ci>0]
 }
 
 borkowf.calc<-function(x,type="log",alpha=.05){
@@ -883,7 +889,7 @@ lines.kmci<-function(x,...){
 }
 
 
-lines.kmciLR<-function(x,lty=c(2,1),col=c(gray(.8),gray(1)),linetype="ci",mark.time=NULL,...){
+lines.kmciLR<-function(x,lty=c(2,1),col=c(gray(.8),gray(0)),linetype="ci",mark.time=NULL,...){
     if (length(lty)==1) lty<-rep(lty,2)
     mark.time<-getDefault.mark.time(mark.time,x)
     n<-length(x$L)
@@ -972,7 +978,8 @@ StCI.default<-function(x,tstar,afterMax="continue",...){
     ###       at time[nt]
     ### afterMax="zeroNoNA"
     ###    - surv, lower go to zero, upper continues at value 
-    ###       at time[nt] (unless it is NA, then take the last non-missing value
+    ###       at time[nt] (unless it is NA, then take the 
+    ###       last non-missing value
     ### afterMax="half"
     ###    - surv goes to half value at time[nt]
     ###    - lower goes to zero, upper continues at value
@@ -991,7 +998,8 @@ StCI.default<-function(x,tstar,afterMax="continue",...){
         } else if (afterMax=="half"){
             x$surv[k]<- .5*x$surv[k] 
             x$lower[k]<-0
-        } else stop("afterMax must be 'continue', 'zero','zeroNoNA', or 'half' ")
+        } else stop("afterMax must be 'continue',
+                     'zero','zeroNoNA', or 'half' ")
     }
     ### I==0 are when tstar[j]< min(time), set all to 1
     S<-L<-U<-rep(1,nt)
@@ -1093,7 +1101,8 @@ median.kmci<-function(x,...){
     quantile.kmci(x,probs=.5)
 }
 
-abmm<-function(a1,b1,a2,b2){
+abmm<-function(a1,b1,a2=NULL,b2=NULL){
+    ## Jan 6, 2016: add NULL defaults, so can leave off a2 and b2
     ## use notation from Fan,1991
     a<-c(a1,a2)
     b<-c(b1,b2)
@@ -1104,102 +1113,58 @@ abmm<-function(a1,b1,a2,b2){
     list(a=newa,b=newb)
 }
 
-bpcp.mm<-function(x,alpha=.05){
-    ### for each time t_j there are 3 intervals
-    ### representing
-    ## (t_{j-1},t_j-Delta]
-    ## (t_j-Delta, t_j)
-    ## [t_j, t_j]
-    ##
-    ## and at the end add (t_k, Inf)
-    ## 
-    ## if Delta=0 then the second interval of the 3 is 
-    ## not needed
-    ## but we keep it in and delete in bpcp after the call
-    ##  to this .calc function 
-    k<-length(x$time)
-    ## Sb is survival at beginning and Se is survival at end
-    Se<-1
-    lower<-upper<-rep(1,3*k+1)
-    ## a and b change for each iteration
-    a<-b<-NULL
-    ## 2013-07-15: add vectors for outputing the beta parameters
-    ## each element matches the beta parameters for the 
-    ## lower or upper interval
-    alower<-aupper<-blower<-bupper<-rep(NA,3*k+1)
-    for (j in 1:k){
-        ## case 1: t_j is a death time (and perhaps 
-        ## censor time also)
-        if (x$di[j]>0){
-            ## a is null at or before the first death time
-            if (is.null(a)){
-                upper[(3*j-2):(3*j-1)]<-1
-                # when b=0, we get a point mass at 1 
-                # when a>0, so set a=1
-                aupper[(3*j-2):(3*j-1)]<-1
-                bupper[(3*j-2):(3*j-1)]<-0
-                ## first interval uses beta for first death time
-                lower[(3*j-2)]<-qbeta(alpha/2,x$ni[j],1)
-                alower[(3*j-2)]<-x$ni[j]
-                blower[(3*j-2)]<-1
-                a<-x$ni[j] - x$di[j] + 1
-                b<- x$di[j]
-           } else {
-                ## after first death time, get upper from 
-                ## upper from previous
-                upper[(3*j-2):(3*j-1)]<- upper[3*(j-1)]
-                aupper[(3*j-2):(3*j-1)]<- aupper[3*(j-1)]
-                bupper[(3*j-2):(3*j-1)]<- bupper[3*(j-1)]
-                abtemp<-abmm(a,b,x$ni[j],1)
-                lower[(3*j-2)]<-qbeta(alpha/2,abtemp$a,abtemp$b)
-                alower[(3*j-2)]<-abtemp$a
-                blower[(3*j-2)]<-abtemp$b
-                # Note: if x$di[j]==0 then a and b do not change
-                ab<-abmm(a,b,x$ni[j] - x$di[j] + 1,x$di[j])
-                a<-ab$a
-                b<-ab$b
-                
-            }
-            upper[3*j]<-qbeta(1-alpha/2,a,b)
-            aupper[3*j]<-a
-            bupper[3*j]<-b
-            lower[(3*j-1):(3*j)]<-qbeta(alpha/2,a,b)
-            alower[(3*j-1):(3*j)]<-a
-            blower[(3*j-1):(3*j)]<-b
-        }  else {
-            ## case 2: (else) time with censoring but no deaths
-            ## a is null at or before the first death time
-            if (is.null(a)){
-                upper[(3*j-2):(3*j)]<-1
-                aupper[(3*j-2):(3*j)]<-1
-                bupper[(3*j-2):(3*j)]<-0
-                ## first interval uses beta for first death time
-                lower[(3*j-2):(3*j)]<-qbeta(alpha/2,x$ni[j],1)
-                alower[(3*j-2):(3*j)]<-x$ni[j]
-                blower[(3*j-2):(3*j)]<-1
-           } else {
-                ## after first death time, get upper from 
-                ## upper from previous
-                upper[(3*j-2):(3*j)]<- upper[3*(j-1)]
-                aupper[(3*j-2):(3*j)]<- aupper[3*(j-1)]
-                bupper[(3*j-2):(3*j)]<- bupper[3*(j-1)]
-                abtemp<-abmm(a,b,x$ni[j],1)
-                lower[(3*j-2):(3*j)]<-qbeta(alpha/2,abtemp$a,
-                    abtemp$b)
-                alower[(3*j-2):(3*j)]<-abtemp$a
-                blower[(3*j-2):(3*j)]<-abtemp$b                
-            }
- 
-        }  
+bpcp.mm<-function(x, alpha=0.05){
+    # Jan 6, 2016: totally rewrote function according to Discrete notes. New convention!
+    h<- length(x$ni)
+    A<- x$ni-x$di+1
+    B<- x$di
 
+    # Calculate A+,A- and B+,B- for all unique time points on the input data set
+    # (in notes: g2,g4,...,g2h)
+    #  where W^+(g_{2j}) ~ Beta(A+[j],B+[j])
+    #  and   W^-(g_{2j}) ~ Beta(A+[j],B+[j])
+    
+    Aplus<-Bplus<-Aminus<-Bminus<-rep(NA,h)
 
+    for (i in 1:h){
+        ab<-abmm(A[1:i],B[1:i])
+        Aminus[i]<-ab$a
+        Bminus[i]<-ab$b    
+        if (i<h){
+            ab<-abmm(A[1:i],B[1:i],x$ni[i+1],1)
+            Aplus[i]<-ab$a
+            Bplus[i]<-ab$b
+        } else {
+            # after last time, Wplus is a point mass at 0
+            Aplus[i]<-0
+            Bplus[i]<-1
+        }
     }
-    upper[3*k+1]<-upper[3*k]
-    aupper[3*k+1]<-aupper[3*k]
-    bupper[3*k+1]<-bupper[3*k]
-    lower[3*k+1]<-0
-    alower[3*k+1]<-0
-    blower[3*k+1]<-1
+    # There are 2h+1 intervals
+    # [g0,g1), [g1,g2),...,[g_{2h}, g_{2h+1})
+    #
+    # In [g_j, g_{j+1}), for the upper limit we use 
+    #        W^-(g_j).
+    # So for the W^-(g), we need to evaluate at 
+    #    g0,g1,g2,g3,g4,....,g2h
+    #    But W^-(g3) = W^-(g2),
+    #    because di=0 and ci=0 for (g2,g3]
+    #    and similarly for all odd values
+    aupper<- c(1,1,rep(Aminus[-h],each=2),Aminus[h])
+    bupper<- c(0,0,rep(Bminus[-h],each=2),Bminus[h])
+    upper<- qqbeta(1-alpha/2,aupper,bupper)
+
+    # In [g_j, g_{j+1}), for the lower limit we use 
+    #        W^+(g_{j+1}).
+    # So for the W^+(g), we need to evaluate at 
+    #    g1,g2,g3,g4,....,g_{2h+1}
+    #    But W^+(g3) = W^+(g2),
+    #    because di=0 and ci=0 for (g2,g3]
+    #    and similarly for all odd values
+    alower<- c(x$ni[1],rep(Aplus,each=2))
+    blower<- c(1,rep(Bplus,each=2))
+    lower<- qqbeta(alpha/2,alower,blower)
+
     list(upper=upper,lower=lower,alower=alower,
          blower=blower,aupper=aupper,bupper=bupper)
 }
@@ -1218,11 +1183,13 @@ bpcpMidp.mm<-function(x,alpha=0.05,midptol=.Machine$double.eps^0.25){
 
     m<-length(a1)
     lowerRootFunc<-function(x,i){
-        qqbeta(alpha/2-x,a1[i],b1[i]) - qqbeta(alpha/2+x,a2[i],b2[i])
+        qqbeta(alpha/2-x,a1[i],b1[i]) - 
+            qqbeta(alpha/2+x,a2[i],b2[i])
     }
     
     upperRootFunc<-function(x,i){
-        qqbeta(1-alpha/2-x,a1[i],b1[i]) - qqbeta(1-alpha/2+x,a2[i],b2[i])
+        qqbeta(1-alpha/2-x,a1[i],b1[i]) - 
+            qqbeta(1-alpha/2+x,a2[i],b2[i])
     }
 
 
@@ -1245,19 +1212,27 @@ bpcpMidp.mm<-function(x,alpha=0.05,midptol=.Machine$double.eps^0.25){
          } else if (a1[i]==0){
              # if a1[i]==0, then Bl is a point mass at 0
              #  and 
-             #  q(1-alpha/2,W) = q(1-alpha,Bu)   for all 0<alpha<1 
+             #  q(1-alpha/2,W) = q(1-alpha,Bu)   
+             #               for all 0<alpha<1 
              lower[i]<-0
              upper[i]<-qqbeta(1-alpha,a2[i],b2[i])
-         } else if (i>1 & (a1[i]==a1[i-1] & b1[i]==b1[i-1] & a2[i]==a2[i-1] & b2[i]==b2[i-1])){
-             ## this if condition is just for saving computation time
+         } else if (i>1 & (a1[i]==a1[i-1] & b1[i]==b1[i-1] & 
+                    a2[i]==a2[i-1] & b2[i]==b2[i-1])){
+             ## this if condition is just for 
+             ## saving computation time
              lower[i]<-lower[i-1]
              upper[i]<-upper[i-1]
          } else {
-             lowerRoot<-uniroot(lowerRootFunc,interval=c(-alpha/2,alpha/2),i=i,tol=midptol)$root
-             # see paper, we want Q(alpha1,a1,b1)=Q(alpha2,ab,b2), where alpha1+alpha2=alpha
-             # so we solve that using uniroot, then Pr[W<=Q]=alpha/2
+             lowerRoot<-uniroot(lowerRootFunc,interval=
+                    c(-alpha/2,alpha/2),i=i,tol=midptol)$root
+             # see paper, we want 
+             #    Q(alpha1,a1,b1)=Q(alpha2,ab,b2), 
+             # where alpha1+alpha2=alpha
+             # so we solve that using uniroot, 
+             # then Pr[W<=Q]=alpha/2
              lower[i]<-qqbeta(alpha/2-lowerRoot,a1[i],b1[i])
-             upperRoot<-uniroot(upperRootFunc,interval=c(-alpha/2,alpha/2),i=i,tol=midptol)$root
+             upperRoot<-uniroot(upperRootFunc,interval=
+                   c(-alpha/2,alpha/2),i=i,tol=midptol)$root
              upper[i]<-qqbeta(1-alpha/2-upperRoot,a1[i],b1[i])
          }
     
@@ -1270,26 +1245,43 @@ bpcpMidp.mm<-function(x,alpha=0.05,midptol=.Machine$double.eps^0.25){
 }
 
 
+#outmm<-bpcpMidp.mm(x)
+#out<-bpcpMidp.mc(x,nmc=10^5)
+#max( abs(outmm$lower-out$lower) )
+#max( abs(outmm$upper-out$upper) )
+
+
+bpcpControl<-function(midpMMTol=.Machine$double.eps^0.25, 
+    seed=49911,tolerance=.Machine$double.eps^0.5){
+    # if you put seed=NA change it to seed=NULL
+    if (!is.null(seed) & is.na(seed)){ seed<-NULL } 
+    if (tolerance<=0){ 
+        stop("tolerance must be positive. 
+             It is the lowest positive value such that if 
+             abs(x-y) is less than tolerance, 
+             then numerics x and y are treated as equal")  }
+    list(midpMMTol=midpMMTol,seed=seed,tolerance=tolerance)
+}
+
+
+
 
 bpcp.mc<-function(x,nmc=100,alpha=.05, testtime=0, DELTA=0, midp=FALSE){
-    ### for each time t_j there are 3 intervals
+    # Jan 6, 2016: totally rewrote function according to Discrete notes. New convention!
+    ### for each time t_j there are 2 intervals
     ### representing
-    ## (t_{j-1},t_j-Delta]
-    ## (t_j-Delta, t_j)
-    ## [t_j, t_j]
+    ## [t_{j-1},t_j-Delta)
+    ## [t_j-Delta, t_j)
     ##
-    ## and at the end add (t_k, Inf)
+    ## and at the end add [t_k, Inf)
     ## 
-    ## if Delta=0 then the second interval of the 3 is 
+    ## if Delta=0 then the second interval of the pair is 
     ## not needed
     ## but we keep it in and delete in bpcp after the 
     ## call to this .calc function 
     k<-length(x$time)
-    lower<-upper<-rep(1,3*k+1)
+    lower<-upper<-rep(1,2*k+1)
     S<-rep(1,nmc)
-    #q<-function(S){
-    #    quantile(S,probs=c(alpha/2,1-alpha/2))
-    #}
     q<-function(slo,shi,Midp=midp){
         if (Midp){
             S<-c(slo,shi)
@@ -1315,56 +1307,47 @@ bpcp.mc<-function(x,nmc=100,alpha=.05, testtime=0, DELTA=0, midp=FALSE){
             Slo<-S*rbeta(nmc,x$ni[j],1)
             lohi<-q(Slo,Shi)
             ## for  (t_{j-1},t_j-Delta]
-            if (t_(j-1)< testtime & testtime<=t_(j)-DELTA) Smc<-list(Slo=Slo,Shi=Shi)
-            lower[3*j-2]<-lohi[1]
-            upper[3*j-2]<-lohi[2]
+            if (t_(j-1)< testtime & 
+               testtime<=t_(j)-DELTA) Smc<-list(Slo=Slo,Shi=Shi)
+            lower[2*j-1]<-lohi[1]
+            upper[2*j-1]<-lohi[2]
             Slo<-S*rbeta(nmc,x$ni[j] - x$di[j] + 1,x$di[j])
             lohi<-q(Slo,Shi)
-            ## for (t_j-Delta, t_j)
-            if (t_(j)-DELTA< testtime & testtime<t_(j)) Smc<-list(Slo=Slo,Shi=Shi)
-            lower[3*j-1]<-lohi[1]
-            upper[3*j-1]<-lohi[2]
+            ## for (t_j-Delta, t_j]
+            if (t_(j)-DELTA< testtime & 
+               testtime<=t_(j)) Smc<-list(Slo=Slo,Shi=Shi)
+            lower[2*j]<-lohi[1]
+            upper[2*j]<-lohi[2]
             S<-Slo
             Shi<-Slo
             lohi<-q(Slo,Shi)
-            ## for  [t_j, t_j]
-            if (t_(j)==testtime) Smc<-list(Slo=Slo,Shi=Shi)
-            lower[3*j]<-lohi[1]
-            upper[3*j]<-lohi[2]
          }  else {
             Shi<-S
             ## Slo=look ahead one failure
             Slo<-S*rbeta(nmc,x$ni[j],1)
             lohi<-q(Slo,Shi)
             ## for (t_{j-1},t_j]
-            if (t_(j-1)< testtime & testtime<=t_(j)) Smc<-list(Slo=Slo,Shi=Shi)
-            lower[(3*j-2):(3*j)]<-lohi[1]
-            upper[(3*j-2):(3*j)]<-lohi[2]
+            if (t_(j-1)< testtime & 
+                  testtime<=t_(j)) Smc<-list(Slo=Slo,Shi=Shi)
+            lower[(2*j-1):(2*j)]<-lohi[1]
+            upper[(2*j-1):(2*j)]<-lohi[2]
         }  
     }
     ## for (t_k, Inf)
     if (testtime>t_(k)) Smc<-list(Slo=S,Shi=rep(0,nmc))
     lohi<- q(rep(0,nmc),S)
-    upper[3*k+1]<-lohi[2]
-    lower[3*k+1]<-lohi[1]
+    upper[2*k+1]<-lohi[2]
+    lower[2*k+1]<-lohi[1]
     list(upper=upper,lower=lower, Smc=Smc)
 }
 
-#outmm<-bpcpMidp.mm(x)
-#out<-bpcpMidp.mc(x,nmc=10^5)
-#max( abs(outmm$lower-out$lower) )
-#max( abs(outmm$upper-out$upper) )
 
 
-bpcpControl<-function(midpMMTol=.Machine$double.eps^0.25, seed=49911){
-    # if you put seed=NA change it to seed=NULL
-    if (!is.null(seed) & is.na(seed)){ seed<-NULL } 
-    list(midpMMTol=midpMMTol,seed=seed)
-}
 
 
 
 bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE, monotonic=NULL, control=bpcpControl()){
+    # Jan 6, 2016: totally rewrote function according to Discrete notes. New convention!
     if (is.null(monotonic)){
         if (nmc==0){
             monotonic<-TRUE
@@ -1381,64 +1364,76 @@ bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE, monot
     ## get Kaplan-Meier and Greenwood variances
     x<-kmgw.calc(time,status,keepCens=TRUE)
     k<-length(x$time)
+    # Check Delta:
+    if (Delta<0) stop("Delta must be greater than 0")
     minTimeDiff<-min(diff(c(0,x$time)))
-    if (minTimeDiff<Delta) stop("Either negative times or Delta is not less than or equal to the minimum difference in times")
-
-    ## each time, t_j, represents 3 intervals
-    ## (t_{j-1},t_j-Delta]
-    ## (t_j-Delta, t_j)
-    ## [t_j, t_j]
-    ## when Delta=0 we replace the first 2 intervals 
-    ## with (t_{j-1},t_j)
-    ## but we do that later
-    KM<-c(rep(1,2),rep(x$KM[-k],each=3),rep(x$KM[k],2))
-    L<-c(0,rep(x$time,each=3)) - c(0,rep(c(Delta,0,0),k))
-    R<-c(rep(x$time,each=3),Inf) - c(rep(c(Delta,0,0),k),0)
-    Lin<-c(FALSE,rep(c(FALSE,TRUE,FALSE),k))
-    Rin<-c(rep(c(TRUE,FALSE,TRUE),k),FALSE)
+    # instead of using minTimeDiff<Delta, use the following
+    # in the if condition, so that machine error does not 
+    # create problems (see default for all.equal tolerance)
+    tolerance<-control$tolerance
+    if (minTimeDiff-Delta+
+         tolerance<0) stop(
+              "Either negative times or 
+              Delta is not less than or equal to 
+              the minimum difference in times")
+    ## each time, t_j, represents 2 intervals
+    ## [t_{j-1},t_j-Delta)
+    ## [t_j-Delta, t_j)
+    ##  add on KM at t=0,
+    ##  for the two intervals: [0,t1-Delta), (t1-Delta,t1]
+    KM<-c(rep(1,2),rep(x$KM[-k],each=2),x$KM[k])
+    L<-c(0,rep(x$time,each=2)) - c(0,rep(c(Delta,0),k))
+    R<-c(rep(x$time,each=2),Inf) - c(rep(c(Delta,0),k),0)
+    Lin<- rep(TRUE,2*k+1)
+    Rin<- rep(FALSE,2*k+1)
 
     if (midp){
-        if (nmc==0){ hilo<-bpcpMidp.mm(x,alpha=alpha,midptol=midpMMTol)
+        if (nmc==0){ 
+           hilo<-bpcpMidp.mm(x,alpha=alpha,midptol=midpMMTol)
         } else hilo<-bpcp.mc(x,nmc,alpha,midp=TRUE)
     } else {
         if (nmc==0){ hilo<-bpcp.mm(x,alpha=alpha)
         } else hilo<-bpcp.mc(x,nmc,alpha)
      }
 
-
     ## we do not need to keep all the intervals in all cases
     ## 1) if Delta==0 then do not need 2nd interval 
-    ## of each triple
+    ## of each pair
     if (Delta==0){ 
-        keep<-c(rep(c(TRUE,FALSE,TRUE),k),TRUE)
-        ## Replace Rin value when Delta=0
-        Rin<-c(rep(c(FALSE,FALSE,TRUE),k),FALSE)
+        keep<-c(rep(c(TRUE,FALSE),k),TRUE)
     } else {
     ## 2) if Delta>0, sometimes you have deaths or 
     ##    censoring in adjascent 
     ##    intervals. For example if Delta=1 and you have 
     ##    deaths in 
     ##    (0,1]  then the death "time" is 1 
-    ##    and the 3 intervals for t_j=1 are
-    ##                  (t_{j-1},t_j-Delta] = (0,0]
-    ##                  (t_j-Delta, t_j) = (0,1)
-    ##                  [t_j,t_j] = [1,1]
+    ##    and the 2 intervals for t_j=1 are
+    ##        [t0,t1-Delta) = [0,0)
+    ##        [t1-Delta, t1)    =[0,1)
     ##    and the first interval is not needed. If the 
     ##    next death or censoring 
-    ##    time was 3, (i.e., there was none in interval 
-    ##    for time=2) then 
-    ##    the next 3 intervals are:
-    ##                  (t_{j-1},t_j-Delta] = (1,3-1] =(1,2]
-    ##                  (t_j-Delta, t_j) = (2,3)
-    ##                  [t_j,t_j] = [3,3]
+    ##    time was t2=3
+    ##    the next 2 intervals are:
+    ##                  [t1,t2-Delta) = [1,3-1) =[1,2)
+    ##                  [t2-Delta, t2) = [2,3)
     ##    and we do not need to delete any. 
     ##    
     ##     So basically if t_j-Delta=t_{j-1} then we 
     ##     delete the first interval 
-    ##     of the 3.
-    keepfirst<- diff(c(0,x$time))!=Delta
-    keep<-rep(TRUE,3*k+1)
-    first<-c(rep(c(TRUE,FALSE,FALSE),k),FALSE)
+    ##     of the pair.
+    #    We cannot use the following code for keepfirst
+    #    because there may be machine error problems
+    #    such as 3.1-.1 != 3   being TRUE 
+    #        keepfirst<- diff(c(0,x$time))!=Delta
+    #   So we call numerics within .Machine$double.eps^0.5 
+    #   as equal   (see default for all.equal)
+    # 
+    keepfirst<- abs(diff(c(0,x$time))-
+                rep(Delta,length(x$time)))>=
+                            tolerance
+    keep<-rep(TRUE,2*k+1)
+    first<-c(rep(c(TRUE,FALSE),k),FALSE)
+
     keep[first]<-keepfirst
     }
     if (stype=="km"){ 
@@ -1450,7 +1445,8 @@ bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE, monot
         }
         ## use recursive call... fix this later to 
         ## make it faster
-        outtemp<-bpcp(time,status,nmc,alpha=1,Delta,stype="km",midp=midp)
+        outtemp<-bpcp(time,status,nmc,
+            alpha=1,Delta,stype="km",midp=midp)
         SURV<- .5*outtemp$lower + .5*outtemp$upper
     }
     ## create list of beta parameters to go with the 
@@ -1476,7 +1472,6 @@ bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE, monot
     class(out)<-"kmciLR"
     out
 }
-
 
 
 

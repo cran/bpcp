@@ -48,7 +48,7 @@ time to event or censoring
 }
 \item{nmc}{number of Monte Carlo replications from each beta distribution, nmc=0 means use method of moments for beta parameters instead}
 \item{NMC}{same as nmc}
-\item{Delta}{width of grouped confidence intervals, defaults to 0}
+\item{Delta}{width of grouped confidence intervals, defaults to 0 (rarely need to change this, even with ties, see details)}
 \item{stype}{type of survival estimate, either "km" for Kaplan-Meier or "mue" for median unbiased estimator} 
 \item{midp}{logical, calculate the mid-p type of interval?}
 \item{monotonic}{logical, force lower and upper confidence limits to be monotonic over time? If NULL: nmc=0 gives TRUE, nmc>0 gives FALSE} 
@@ -70,6 +70,10 @@ The standard beta product confidence procedure (i.e., with midp=FALSE) will give
 hence the BPCP (as with the other confidence interval given here) goes to the correct confidence interval for any t.   
 
 There is also a mid-p version of the BPCP. The BPCP is derived from using the known distribution of the failure times, and acting conservatively between the failure times (see Fay, Brittain, and Proschan, 2013 for details). Instead of acting conservatively between the failure times, the midp=TRUE version combines the distributions for the previous failure and the future failure time (see Fay and Brittain, 2015). 
+
+
+For description of how \code{bpcp} with different values of Delta works, see "Beta Product Confidence Intervals for Discrete Failure Times" vignette (especially Section 2.2). Note especially that confidence intervals exactly at the failure times when Delta=0 are handled differently before Version 1.3.0 than from Version>=1.3.0. For users not interested in details who only want to know the recommended confidence intervals on right censored data when ties are allowed, we recommend the \code{ bpcp} function version 1.3.0 or greater using the default Delta=0 argument. That recommendation will give pointwise confidence intervals that treats ties similarly to the way that the Kaplan-Meier estimator treats ties, and hence will give confidence intervals that enclose the Kaplan-Meier estimate.
+
 
 Now we describe the other methods. 
 In general the functions are of three naming types: kmtestXX, kmci1XX and kmciXX, where XX changes for different methods. 

@@ -26,7 +26,8 @@ meldMC<-function(T1,T2, nullparm=NULL, parmtype=c("difference","oddsratio","rati
         dolo<-dohi<-TRUE
         alpha<-(1-conf.level)/2  
     } else if (alt=="less"){
-        ## alt=less so lower interval is lowest possible, do not calculate
+        ## alt=less so lower interval is lowest possible, 
+        ## do not calculate
         dolo<-FALSE
         lower<- lowerLimit
         dohi<-TRUE
@@ -117,10 +118,10 @@ function(betaParms1,
             if (!all(sort(names(betaParm))==betaParmNames)){
                 stop("list must have named elements, 
                    'alower', 'blower', 'aupper', and 'bupper' ")
-            } else if (betaParm$alower<0 |
-                       betaParm$aupper<0 |
-                       betaParm$blower<0 |
-                       betaParm$bupper<0 ) {
+            } else if (any(betaParm$alower<0) |
+                       any(betaParm$aupper<0) |
+                       any(betaParm$blower<0) |
+                       any(betaParm$bupper<0) ) {
                 stop("betaParms cannot have elements less than 0")
             }
         } else stop("betaParm should be a list")
@@ -231,7 +232,8 @@ function(betaParms1,
 
     # p-value functions 
     pGreater<-function(delta){
-        ## for the integrate function to work well, pick values that 
+        ## for the integrate function to work well, 
+        ## pick values that 
         ## make sense  in funcGreater
         ## recall funcGreater is 
         ##   pbeta2( W[t] )* dbeta1(t) 
@@ -242,7 +244,8 @@ function(betaParms1,
         ##       ratio:   W[t] = t*D
         ##   odds ratio:  W[t] = t*D/(1-t+t*D)
         ##
-        ## First, choose LowerInt=a and UpperInt=b so that \int_a^b  dbeta1(t) dt = 1- eps/2 
+        ## First, choose LowerInt=a and UpperInt=b so 
+        ## that \int_a^b  dbeta1(t) dt = 1- eps/2 
         LowerInt<-qbeta(eps/4,aU1,bU1)
         UpperInt<-qbeta(1-eps/4,aU1,bU1)
         ##  Second, choose a2 so that pbeta2( W[a2] )= eps/2
@@ -261,16 +264,19 @@ function(betaParms1,
         pout<-rep(0,length(delta))
         for (i in 1:length(delta)){
             if (LowerInt<UpperInt){
-                pout[i]<-integrate(funcGreater,LowerInt,UpperInt,D=delta[i])$value
+                pout[i]<-integrate(funcGreater,LowerInt,
+                   UpperInt,D=delta[i])$value
             }
         }
-        ## since we underestimate the integral (assuming perfect integration) by at most eps, 
+        ## since we underestimate the integral 
+        ## (assuming perfect integration) by at most eps, 
         ## add back eps to get conservative p-value
         pout<-pout+eps
         pout
     }
     pLess<-function(delta){
-        ## for the integrate function to work well, pick values that 
+        ## for the integrate function to work well, 
+        ## pick values that 
         ## make sense  in funcLess
         ## recall funcLess is 
         ##   pbeta1( W[t] )* dbeta2(t) 
@@ -281,7 +287,8 @@ function(betaParms1,
         ##       ratio:   W[t] = t/D
         ##   odds ratio:  W[t] = t/(t+(1-t)*D)
         ##
-        ## First, choose LowerInt=a and UpperInt=b so that \int_a^b  dbeta2(t) dt = 1- eps/2 
+        ## First, choose LowerInt=a and UpperInt=b so 
+        ## that \int_a^b  dbeta2(t) dt = 1- eps/2 
         LowerInt<-qbeta(eps/4,aU2,bU2)
         UpperInt<-qbeta(1-eps/4,aU2,bU2)
          
@@ -300,10 +307,12 @@ function(betaParms1,
         pout<-rep(0,length(delta))
         for (i in 1:length(delta)){
             if (LowerInt<UpperInt){
-                pout[i]<-integrate(funcLess,LowerInt,UpperInt,D=delta[i])$value
+                pout[i]<-integrate(funcLess,LowerInt,
+                       UpperInt,D=delta[i])$value
             }
         }
-        ## since we underestimate the integral (assuming perfect integration) by at most eps, 
+        ## since we underestimate the integral 
+        ## (assuming perfect integration) by at most eps, 
         ## add back eps to get conservative p-value
         pout<-pout+eps
         pout
@@ -316,13 +325,15 @@ function(betaParms1,
         dolo<-dohi<-TRUE
         alpha<-(1-conf.level)/2  
     } else if (alt=="less"){
-        ## alt=less so lower interval is lowest possible, do not calculate
+        ## alt=less so lower interval is lowest possible, 
+        ## do not calculate
         dolo<-FALSE
         lower<- lowerLimit
         dohi<-TRUE
         alpha<-1-conf.level
     } else if (alt=="greater"){
-        # alt=greater so upper interval is highest possible, do not calculate
+        # alt=greater so upper interval is highest possible, 
+        # do not calculate
         dolo<-TRUE
         dohi<-FALSE
         upper<- upperLimit
@@ -337,7 +348,8 @@ function(betaParms1,
     names(estimate)<-ptype
 
     if (dolo){
-        ## Take care of special cases, when x2=0 T2 is point mass at 0
+        ## Take care of special cases, 
+        ## when x2=0 T2 is point mass at 0
         ## when x1=n1 T1 is a point mass at 1
         if (aL2==0 & bU1>0){
             if (conf.int) lower<- g( qbeta(1-alpha,aU1,bU1), 0 )
@@ -365,20 +377,25 @@ function(betaParms1,
                 }
                 if (upperLimit==Inf){
                     # uniroot cannot take Inf as an upper limit
-                    # find T such that rootfunc(T) has opposite sign as
+                    # find T such that rootfunc(T) has 
+                    # opposite sign as
                     # rootfunc(lowerLimit)
                     for (i in 1:50){
                         upperLimit<-2^i
-                        if (sign(rootfunc(lowerLimit))!=sign(rootfunc(upperLimit))){
+                        if (sign(rootfunc(lowerLimit))!=
+                            sign(rootfunc(upperLimit))){
                             break()
                         }
                     }
                 }
                 if (upperLimit==2^50){
-                    warning("lower conf limit appears to be larger than 2^50=approx=10^16, set to 2^50")
+                    warning("lower conf limit appears to 
+                              be larger than 
+                              2^50=approx=10^16, set to 2^50")
                     lower<-2^50
                 } else {
-                    lower<-uniroot(rootfunc,c(lowerLimit,upperLimit))$root
+                    lower<-uniroot(rootfunc,
+                         c(lowerLimit,upperLimit))$root
                 }
             }
             pg<-pGreater(nullparm)
@@ -387,7 +404,8 @@ function(betaParms1,
         }
     }
     if (dohi){
-        ## Take care of special cases, when bU2=0 T2 is point mass at 1
+        ## Take care of special cases, 
+        ## when bU2=0 T2 is point mass at 1
         ## when aL1=0 T1 is a point mass at 0
         if (aL1==0 & bU2==0){
             if (conf.int) upper<-g(0,1)
@@ -417,20 +435,25 @@ function(betaParms1,
                 }
                 if (upperLimit==Inf){
                     # uniroot cannot take Inf as an upper limit
-                    # find T such that rootfunc(T) has opposite sign as
+                    # find T such that rootfunc(T) has 
+                    # opposite sign as
                     # rootfunc(lowerLimit)
                     for (i in 1:50){
                         upperLimit<-2^i
-                        if (sign(rootfunc(lowerLimit))!=sign(rootfunc(upperLimit))){
+                        if (sign(rootfunc(lowerLimit))!=
+                            sign(rootfunc(upperLimit))){
                             break()
                         }
                     }
                 }
                 if (upperLimit==2^50){
-                    warning("upper conf limit appears to be larger than 2^50=approx=10^15, set to Inf")
+                    warning("upper conf limit appears to be
+                              larger than 2^50=approx=10^15, 
+                              set to Inf")
                     upper<-Inf
                 } else {
-                    upper<-uniroot(rootfunc,c(lowerLimit,upperLimit))$root
+                    upper<-uniroot(rootfunc,
+                        c(lowerLimit,upperLimit))$root
                 }
             }
             pl<-pLess(nullparm)
@@ -445,7 +468,8 @@ function(betaParms1,
     }
     ci<-c(lower,upper)
     attr(ci,"conf.level")<-conf.level
-    #dname<-paste("sample 1:(",x1,"/",n1,"), sample 2:(",x2,"/",n2,")",sep="")
+    #dname<-paste("sample 1:(",x1,"/",n1,"), 
+    # sample 2:(",x2,"/",n2,")",sep="")
     #dname<-dname
     #method<-paste("exact melded test for two binomials")
     method<-"melded test using two beta CDs"
@@ -457,7 +481,8 @@ function(betaParms1,
 
     structure(list(statistic = stat, parameter = parm, 
         p.value = p.value, 
-        conf.int = ci, estimate = estimate, null.value = nullparm, 
+        conf.int = ci, estimate = estimate, 
+        null.value = nullparm, 
         alternative = alt, method = method, 
         data.name = dname), class = "htest")
 
@@ -599,27 +624,37 @@ bpcp2samp<-function(time,status,group, testtime,
     if (length(testtime)>1 | !is.numeric(testtime[1]) | testtime[1]<0) stop("testtime must be a vector of length 1")
     ## end of argument checking
 
-    ## to avoid problems with same name of argument and value, rename some objects
+    ## to avoid problems with same name of argument and 
+    ## value, rename some objects
     Nullparm<-nullparm
     CL<-conf.level
     alt<-match.arg(alternative)
     
     ptype<-match.arg(parmtype)
     if (ptype=="difference"){
-      Dname<-paste("S(",testtime,";group=",ug[2],")-S(",testtime,";group=",ug[1],")",sep="")
+      Dname<-paste("S(",testtime,";group=",ug[2],
+                 ")-S(",testtime,";group=",ug[1],")",sep="")
     } else if (ptype=="ratio"){
-      Dname<-paste("S(",testtime,";group=",ug[2],")/S(",testtime,";group=",ug[1],")",sep="")
+      Dname<-paste("S(",testtime,";group=",ug[2],")/
+                    S(",testtime,";group=",ug[1],")",sep="")
     } else if (ptype=="oddsratio"){
-      Dname<-paste("odds[S(",testtime,";group=",ug[2],")]/odds[S(",testtime,";group=",ug[1],")]",sep="")
+      Dname<-paste("odds[S(",testtime,";group=",ug[2],
+                ")]/odds[S(",testtime,";group=",ug[1],
+                 ")]",sep="")
     }
     
     # regardless of method, need estimate, so run 
     # fastest (nmc=0) for single sample
     I<-group==ug[1]
-    fit1<-bpcp(time[I],status[I],Delta=control$Delta,                    stype=control$stype, midp=midp)
+    fit1<-bpcp(time[I],status[I],
+              Delta=control$Delta,
+              stype=control$stype, midp=midp)
     I<-group==ug[2]
-    fit2<-bpcp(time[I],status[I],Delta=control$Delta, stype=control$stype, midp=midp)
+    fit2<-bpcp(time[I],status[I],
+              Delta=control$Delta, 
+              stype=control$stype, midp=midp)
       
+browser()
       
     getList<-function(fit,testtime){
       # get list of results at testtime
@@ -668,11 +703,16 @@ bpcp2samp<-function(time,status,group, testtime,
         if (midp){
             I<-group==ug[1] 
             x1<-kmgw.calc(time[I],status[I],keepCens=TRUE)
-            mc1<-bpcp.mc(x1,nmc=control$nmc,testtime=testtime,DELTA=control$Delta, midp=TRUE)
+            mc1<-bpcp.mc(x1,nmc=control$nmc,
+                    testtime=testtime,DELTA=control$Delta,
+                    midp=TRUE)
             I<-group==ug[2]
             x2<-kmgw.calc(time[I],status[I],keepCens=TRUE)
-            mc2<-bpcp.mc(x2,nmc=control$nmc,testtime=testtime,DELTA=control$Delta, midp=TRUE)
-            testout<-meldMC(c(mc1$Smc$Slo,mc1$Smc$Shi), c(mc2$Smc$Slo,mc2$Smc$Shi),
+            mc2<-bpcp.mc(x2,nmc=control$nmc,
+                 testtime=testtime,DELTA=control$Delta,
+                 midp=TRUE)
+            testout<-meldMC(c(mc1$Smc$Slo,mc1$Smc$Shi), 
+                            c(mc2$Smc$Slo,mc2$Smc$Shi),
                               nullparm=Nullparm,
                               parmtype=ptype,
                               conf.level=CL,
@@ -685,20 +725,26 @@ bpcp2samp<-function(time,status,group, testtime,
             # midp=FALSE
             I<-group==ug[1] 
             x1<-kmgw.calc(time[I],status[I],keepCens=TRUE)
-            mc1<-bpcp.mc(x1,nmc=control$nmc,testtime=testtime,DELTA=control$Delta, midp=FALSE)
+            mc1<-bpcp.mc(x1,nmc=control$nmc,
+                 testtime=testtime,DELTA=control$Delta, 
+                 midp=FALSE)
             I<-group==ug[2]
             x2<-kmgw.calc(time[I],status[I],keepCens=TRUE)
-            mc2<-bpcp.mc(x2,nmc=control$nmc,testtime=testtime,DELTA=control$Delta, midp=FALSE)
+            mc2<-bpcp.mc(x2,nmc=control$nmc,
+                     testtime=testtime,DELTA=control$Delta,
+                     midp=FALSE)
             if (alt=="two.sided"){
                 dolo<-dohi<-TRUE
                 alpha<-(1-conf.level)/2  
             } else if (alt=="less"){
-                ## alt=less so lower interval is lowest possible, do not calculate
+                ## alt=less so lower interval is lowest 
+                ## possible, do not calculate
                 dolo<-FALSE
                 dohi<-TRUE
                 alpha<-1-conf.level
             } else if (alt=="greater"){
-                # alt=greater so upper interval is highest possible, do not calculate
+                # alt=greater so upper interval is 
+                # highest possible, do not calculate
                 dolo<-TRUE
                 dohi<-FALSE
                 alpha<-1-conf.level
@@ -706,7 +752,8 @@ bpcp2samp<-function(time,status,group, testtime,
 
             if (dolo){
                 # take Shi from group 1, and Slo from group 2
-                testout.lo<-meldMC(c(mc1$Smc$Shi), c(mc2$Smc$Slo),
+                testout.lo<-meldMC(c(mc1$Smc$Shi), 
+                              c(mc2$Smc$Slo),
                               nullparm=Nullparm,
                               parmtype=ptype,
                               conf.level=1-alpha,
@@ -717,7 +764,8 @@ bpcp2samp<-function(time,status,group, testtime,
             } 
             if (dohi){
                 # take Slo from group 1, and Shi from group 2
-                testout.hi<-meldMC(c(mc1$Smc$Slo), c(mc2$Smc$Shi),
+                testout.hi<-meldMC(c(mc1$Smc$Slo), 
+                              c(mc2$Smc$Shi),
                               nullparm=Nullparm,
                               parmtype=ptype,
                               conf.level=1-alpha,
@@ -729,8 +777,10 @@ bpcp2samp<-function(time,status,group, testtime,
             if (alt=="two.sided"){
                 testout<-testout.lo
                 # two.sided p-value is min(1,2*plower,2*pupper)
-                testout$p.value<-min(1,2*testout.lo$p.value,2*testout.hi$p.value)
-                testout$conf.int<-c(testout.lo$conf.int[1],testout.hi$conf.int[2])
+                testout$p.value<-min(1,2*testout.lo$p.value,
+                                       2*testout.hi$p.value)
+                testout$conf.int<-c(testout.lo$conf.int[1],
+                                    testout.hi$conf.int[2])
                 testout$alternative<-alt
             } else if (alt=="less"){
                 testout<-testout.hi
