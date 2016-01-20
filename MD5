@@ -1,10 +1,10 @@
-6c3a34d6b7ee0725da153512b7183c80 *DESCRIPTION
+d742de3b13d61f74d39fdc3e1f0a1f1f *DESCRIPTION
 e3c4f2bb200982741c94a4821c0901eb *NAMESPACE
-a1f5b7fc219dcc28320054a02a574adb *NEWS
+3a5e804c2ad372765f89e36976fb0cd8 *NEWS
 916974c41316788995130568c037729c *R/bpcp2sample.R
 c01ab8189f57c03a1b14bad0285e9890 *R/kmciFunctions.R
 98038168d4726db66dfe355fb6c99ebd *R/mdiffmedian.test.R
-147064736022d577d8116320266220c9 *build/vignette.rds
+b1ac3a569467d34809d842e744955d11 *build/vignette.rds
 87fbe89b579380046459ef836e18b408 *data/leuk.rda
 ea356e305d91d66315d7cec570eeee29 *data/leuk2.rda
 e752e0ca25d1df0f0ab4ace9d288b211 *data/sclerosis.rda
@@ -17,13 +17,13 @@ d17d9e614252c5d9c557ece5d78f6228 *demo/Simulation2015.R
 b8e76a5e50a1c2c6842d19708e783b01 *demo/SimulationBootOnly2013.R
 29ad623a25b71ca416bde0a3ce3673ad *inst/CITATION
 ace917b074377cc1e753e1006f09bbdd *inst/doc/NotesMMandMC.pdf
-a68fead689b5dd81f15b9b3f2b4a6e8b *inst/doc/discreteBPCP.R
-bf118281e81b83aebaa4b7106a0d5c2e *inst/doc/discreteBPCP.Rnw
-955a86a47fff181d97375a25cf29d795 *inst/doc/discreteBPCP.pdf
+6409dd6c8e634c964048d26f98816207 *inst/doc/discreteBPCP.R
+bb2fa3eca060ecc262da02e134c7b207 *inst/doc/discreteBPCP.Rnw
+20801149a01c6284fde06fc41d382a51 *inst/doc/discreteBPCP.pdf
 faf9ee7c893520a4f676c52027264365 *man/StCI.Rd
 287b1ae217d73c25e8aedb1174b757bf *man/betaMeldTest.Rd
 c8629317bc1cc14346ce74c6e05477fa *man/bpcp-internal.Rd
-402a3bace95962237b430ebcea5b632e *man/bpcp-package.Rd
+7b7a4093e4ff706d7bd76bebbc758e5d *man/bpcp-package.Rd
 b0cec85f0e268d619c7f57ca4664aafc *man/bpcp2samp.Rd
 93ebec1cc95835c60bd83bdf1d1f3264 *man/bpcp2sampControl.Rd
 03ebe190ca04d9c748d844389f9eb669 *man/bpcpControl.Rd
@@ -39,4 +39,4 @@ abf20ff3325ade4f80ee8be90e04b4f2 *man/plot.kmciLR.Rd
 9fc47bd2347cf3fa8ff7dc831fb19da8 *man/sclerosis.Rd
 d0a6f4492f3c8291b4cd56a949d376d4 *man/summary.kmciLR.Rd
 23accd6639667a04675f63724aaf7c22 *tests/tests.R
-bf118281e81b83aebaa4b7106a0d5c2e *vignettes/discreteBPCP.Rnw
+bb2fa3eca060ecc262da02e134c7b207 *vignettes/discreteBPCP.Rnw

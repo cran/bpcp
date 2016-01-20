@@ -1,24 +1,51 @@
-% LaTeX Article Template
-\documentclass[12pt]{article}
-\topmargin -0.7in
-\textheight 9.0in
-%\textwidth 6in
-\textwidth 6.5in
-%\oddsidemargin 0.25in
-%\oddsidemargin -.25in
-\oddsidemargin 0.0in
+% File src/library/utils/vignettes/Sweave.Rnw
+% Part of the R package, https://www.R-project.org
+% Copyright 2002-2014 Friedrich Leisch and the R Core Team
+% Distributed under GPL 2 or later
 
-% \VignetteIndexEntry{Beta Product Confidence Intervals for Discrete Failure Times}
-% \VignetteKeyword{Survival}
-% \VignetteKeyword{Exact Confidence Interval}
+\documentclass[a4paper]{article}
+
+%\VignetteIndexEntry{Beta Product Confidence  Procedure Confidence Intervals and Discrete Data}
+%\VignettePackage{bpcp}
+%\VignetteDepends{stats}
+%\VignetteKeyword{Survival}
+%\VignetteKeyword{Exact Confidence Interval}
+
+\title{Beta Product Confidence  Procedure Confidence Intervals and Discrete Data}
+\author{Michael P. Fay  and Erica H. Brittain}
+
+\usepackage[round]{natbib}
+\usepackage{graphicx, Rd}
+\usepackage{listings}
+
+\lstset{frame=trbl,basicstyle=\small\tt}
+\usepackage{hyperref}
+\usepackage{color}
+\definecolor{Blue}{rgb}{0,0,0.8}
+\hypersetup{%
+colorlinks,%
+plainpages=true,%
+linkcolor=black,%
+citecolor=black,%
+urlcolor=Blue,%
+%pdfstartview=FitH,% or Fit
+pdfstartview={XYZ null null 1},%
+pdfview={XYZ null null null},%
+pdfpagemode=UseNone,% for no outline
+pdfauthor={Friedrich Leisch and R-core},%
+pdftitle={Sweave User Manual},%
+pdfsubject={R vignette documentation system}%
+}
+
+\sloppy
 
 \begin{document}
 
-\begin{center}
-{\Large \bf Beta Product Confidence  Procedure Confidence Intervals and Discrete Data } \\
-Michael P. Fay  and Erica H. Brittain \\
-\today
-\end{center}
+\maketitle
+
+
+
+
 
 <<echo=FALSE,results=hide,eval=T>>=
 library(bpcp)
