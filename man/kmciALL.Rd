@@ -69,7 +69,7 @@ time to event or censoring
 The standard beta product confidence procedure (i.e., with midp=FALSE) will give pointwise confidence intervals for right censored data with the following properties. When there is no censoring or Progressive Type II censoring the BPCP guarantees central coverage (e.g., the error rate on either side of the 95 percent confidence interval is guaranteed to be less than 2.5 percent). For general independent censoring the BPCP is asymptotically equivalent to standard methods such as the normal approximation with Greenwood variance, and 
 hence the BPCP (as with the other confidence interval given here) goes to the correct confidence interval for any t.   
 
-There is also a mid-p version of the BPCP. The BPCP is derived from using the known distribution of the failure times, and acting conservatively between the failure times (see Fay, Brittain, and Proschan, 2013 for details). Instead of acting conservatively between the failure times, the midp=TRUE version combines the distributions for the previous failure and the future failure time (see Fay and Brittain, 2015). 
+There is also a mid-p version of the BPCP. The BPCP is derived from using the known distribution of the failure times, and acting conservatively between the failure times (see Fay, Brittain, and Proschan, 2013 for details). Instead of acting conservatively between the failure times, the midp=TRUE version combines the distributions for the previous failure and the future failure time (see Fay and Brittain, 2016). 
 
 
 For description of how \code{bpcp} with different values of Delta works, see "Beta Product Confidence Intervals for Discrete Failure Times" vignette (especially Section 2.2). Note especially that confidence intervals exactly at the failure times when Delta=0 are handled differently before Version 1.3.0 than from Version>=1.3.0. For users not interested in details who only want to know the recommended confidence intervals on right censored data when ties are allowed, we recommend the \code{ bpcp} function version 1.3.0 or greater using the default Delta=0 argument. That recommendation will give pointwise confidence intervals that treats ties similarly to the way that the Kaplan-Meier estimator treats ties, and hence will give confidence intervals that enclose the Kaplan-Meier estimate.
@@ -137,7 +137,7 @@ and results from bpcp additionally have an element
 \references{
 Fay, MP, Brittain, E, and Proschan, MA. (2013). Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.  Biostatistics 14 (4): 723-736. (copy available at http://www.niaid.nih.gov/about/organization/dcr/brb/staff/Pages/michael.aspx).  
 
-Fay, MP, and Brittain, E (2015). Finite Sample Pointwise Confidence Intervals for a Survival Distribution with Right-Censored Data (unpublished manuscript). 
+Fay, MP, and Brittain, E (2016). Finite Sample Pointwise Confidence Intervals for a Survival Distribution with Right-Censored Data. Statistics in Medicine. doi: 10.1002/sim.6905. 
 
 Barber and Jennison (1999) Biometrics, 55: 430-436.
 

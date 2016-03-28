@@ -1106,11 +1106,19 @@ abmm<-function(a1,b1,a2=NULL,b2=NULL){
     ## use notation from Fan,1991
     a<-c(a1,a2)
     b<-c(b1,b2)
-    S<-prod( a/(a+b) )
-    T<-prod( (a*(a+1))/((a+b)*(a+b+1)) )
-    newa<- ((S-T)*S)/(T-S^2)
-    newb<- ((S-T)*(1-S))/(T-S^2)
-    list(a=newa,b=newb)
+    ## March 25, 2016: problem if a=4 b=0, gives NaN
+    if (length(a)==1 | all(b==0) ){
+        out<-list(a=a,b=b)
+    }  else if (any(a==0)) {
+        out<-list(a=0,b=b[1])
+    }  else {
+        S<-prod( a/(a+b) )
+        T<-prod( (a*(a+1))/((a+b)*(a+b+1)) )
+        newa<- ((S-T)*S)/(T-S^2)
+        newb<- ((S-T)*(1-S))/(T-S^2)
+        out<-list(a=newa,b=newb)
+    }
+    out
 }
 
 bpcp.mm<-function(x, alpha=0.05){

@@ -18,8 +18,8 @@ Also included is a difference in medians test that applies only to non-censored 
 \tabular{ll}{
 Package: \tab bpcp\cr
 Type: \tab Package\cr
-Version: \tab 1.3.1\cr
-Date: \tab 2016-01-20\cr
+Version: \tab 1.3.2\cr
+Date: \tab 2016-03-25\cr
 License: \tab GPL2\cr
 LazyLoad: \tab yes\cr
 }
@@ -27,7 +27,7 @@ The most important function for the single sample case is the  \code{\link{bpcp}
 properties. That function creates an \code{kmciLR} object which has 6 methods: \code{summary} (create a data frame with estimates and confidence intervals), 
 \code{plot} (plot Kaplan-Meier with confidence intervals), \code{lines} (add confidence intervals to a plot),  
 \code{StCI} (pick out survival and confidence interval at specific times),
-\code{median} (pick out median and confidence interval on median), and \code{quantile} (pick out any quantile and its confidence interval). A mid-p option for \code{\link{bpcp}} is now available. It gives closer to nominal coverage than the standard (midp=FALSE) BPCP. For details see Fay et al (2013) on the standard BPCP and Fay and Brittain (2015) on the mid-p option. 
+\code{median} (pick out median and confidence interval on median), and \code{quantile} (pick out any quantile and its confidence interval). A mid-p option for \code{\link{bpcp}} is now available. It gives closer to nominal coverage than the standard (midp=FALSE) BPCP. For details see Fay et al (2013) on the standard BPCP and Fay and Brittain (2016) on the mid-p option. 
 
 For the two-sample test see \code{\link{bpcp2samp}}. This test for equality reduces to Fisher's exact test when there is no censoring. When there is censoring, the test is expected to maintain at least nominal coverage.  For details see Fay et al (2015). 
 }
@@ -43,7 +43,7 @@ doi: 10.1093/biostatistics/kxt016. (copy available at http://www.niaid.nih.gov/a
 
 Fay, MP, Proschan, MA, and Brittain, E (2015). Combining One Sample Confidence Procedures for Inference in the Two Sample Case. Biometrics 71:146-156.
 
-Fay, MP, and Brittain, E (2015). Finite Sample Pointwise Confidence Intervals for a Survival Distribution with Right-Censored Data (unpublished manuscript).
+Fay, MP, and Brittain, E (2016). Finite Sample Pointwise Confidence Intervals for a Survival Distribution with Right-Censored Data. Statistics in Medicine. doi: 10.1002/sim.6905.
 }
 \keyword{ package }
 \keyword{survival}

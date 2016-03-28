@@ -358,7 +358,7 @@ leaving the $h+1$ intervals
 \item Fay, MP, Brittain, EH, and Proschan, MA (2013). ``Pointwise Confidence Intervals for a Survival Distribution with Small Samples or Heavy Censoring.''
 {\it Biostatistics} {\bf 14}(4): 723-736.
 \item Fay, MP, and Brittain, EH (2016). ``Finite Sample Pointwise Confidence Intervals for a Survival Distribution with Right-Censored Data.''
-(unpublished manuscript).
+{\it Statistics in Medicine}. DOI: \verb@10.1002/sim.6905@
 \end{description}
 
 \end{document}

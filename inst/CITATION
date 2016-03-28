@@ -16,13 +16,13 @@ citEntry(entry="Article",
 citEntry(entry="Article",
   title        = "Finite sample pointwise confidence intervals for a survival distribution with right-censored data",
   author       = personList(as.person("Michael P. Fay"),as.person("Erica H. Brittain")), 
-  journal      = "(unpublished manuscript)",
+  journal      = "Statistics in Medicine",
   year         = "2016",
   volume       = "",
   number       = "",  
   pages        = "",
   url ="http://www.niaid.nih.gov/about/organization/dcr/BRB/Pages/michael.aspx",
-  textVersion  ="Fay MP, Brittain, EH (2015). Finite sample pointwise confidence intervals for a survival distribution with right-censored data. (unpublished manuscript).",
+  textVersion  ="Fay MP, Brittain, EH (2016). Finite sample pointwise confidence intervals for a survival distribution with right-censored data. Statistics in Medicine. doi: 10.1002/sim.6905",
   header = "For inferences in one sample using other BPCP versions cite:"
 )
 
