@@ -1,8 +1,8 @@
-2c67c36a9bc184446eea7d223334bab8 *DESCRIPTION
+b64533f32b26a6cee804dbe05efb879a *DESCRIPTION
 e3c4f2bb200982741c94a4821c0901eb *NAMESPACE
-29e87d48854b0e3a134c8d84dd7821ec *NEWS
-916974c41316788995130568c037729c *R/bpcp2sample.R
-ef2839e31333413f0cd9942e8fa45144 *R/kmciFunctions.R
+998250ae5084a403efd47c2f9507e460 *NEWS
+ba2124bba8ede6ee10a3d8721bff8d1a *R/bpcp2sample.R
+e394701f3d45eb15ed9c7f558256acf5 *R/kmciFunctions.R
 98038168d4726db66dfe355fb6c99ebd *R/mdiffmedian.test.R
 3e611cc66d48dd9564f89c53f7918f0e *build/vignette.rds
 87fbe89b579380046459ef836e18b408 *data/leuk.rda
@@ -19,11 +19,11 @@ ddcca588843cd1e3226eb3670742da64 *inst/CITATION
 ace917b074377cc1e753e1006f09bbdd *inst/doc/NotesMMandMC.pdf
 6409dd6c8e634c964048d26f98816207 *inst/doc/discreteBPCP.R
 11c202a04bd7b4b045b42f3f819d1399 *inst/doc/discreteBPCP.Rnw
-a8f2262c2484a487a967e5826e665af4 *inst/doc/discreteBPCP.pdf
+c5c39a9523123b3b6467ce88e01aef05 *inst/doc/discreteBPCP.pdf
 faf9ee7c893520a4f676c52027264365 *man/StCI.Rd
 287b1ae217d73c25e8aedb1174b757bf *man/betaMeldTest.Rd
 c8629317bc1cc14346ce74c6e05477fa *man/bpcp-internal.Rd
-c677f7afdfae0dbd9736983e98933d5e *man/bpcp-package.Rd
+95e6f7402ef3b2d12297d6239ef7f115 *man/bpcp-package.Rd
 b0cec85f0e268d619c7f57ca4664aafc *man/bpcp2samp.Rd
 93ebec1cc95835c60bd83bdf1d1f3264 *man/bpcp2sampControl.Rd
 03ebe190ca04d9c748d844389f9eb669 *man/bpcpControl.Rd
@@ -34,7 +34,7 @@ b183dae44247dd00b5abc53b2d7804b4 *man/kmci.object.Rd
 33def3139baa90a3cd0667ec2bf06fbf *man/leuk.Rd
 42cc1ee2feeaf0e64fc2ec2604377678 *man/leuk2.Rd
 05aafddc53d363a52c3f503d07815a89 *man/mdiffmedian.test.Rd
-abf20ff3325ade4f80ee8be90e04b4f2 *man/plot.kmciLR.Rd
+75877167debd6f87f93e51c32af10ac8 *man/plot.kmciLR.Rd
 4a1b04134741391f3f51ce2bf655a469 *man/quantile.kmciLR.Rd
 9fc47bd2347cf3fa8ff7dc831fb19da8 *man/sclerosis.Rd
 d0a6f4492f3c8291b4cd56a949d376d4 *man/summary.kmciLR.Rd

@@ -889,7 +889,7 @@ lines.kmci<-function(x,...){
 }
 
 
-lines.kmciLR<-function(x,lty=c(2,1),col=c(gray(.8),gray(0)),linetype="ci",mark.time=NULL,...){
+lines.kmciLR<-function(x,lty=c(2,1),col=c(gray(.8),gray(0)),linetype="both",mark.time=NULL,...){
     if (length(lty)==1) lty<-rep(lty,2)
     mark.time<-getDefault.mark.time(mark.time,x)
     n<-length(x$L)

@@ -18,7 +18,7 @@ Plots survival curves and/or confidence intervals.
     ciLTY = 2, ciCOL = gray(0.8), mark.time = NULL, linetype = "both", ...)
 
 \method{lines}{kmciLR}(x, lty = c(2, 1), col = c(gray(0.8), gray(0)), 
-    linetype = "ci", mark.time = NULL, ...)
+    linetype = "both", mark.time = NULL, ...)
 
 \method{lines}{kmci}(x, ...)
 

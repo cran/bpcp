@@ -653,9 +653,7 @@ bpcp2samp<-function(time,status,group, testtime,
     fit2<-bpcp(time[I],status[I],
               Delta=control$Delta, 
               stype=control$stype, midp=midp)
-      
-browser()
-      
+            
     getList<-function(fit,testtime){
       # get list of results at testtime
       i<- (fit$L<testtime & testtime<fit$R) |

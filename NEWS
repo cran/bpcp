@@ -1,3 +1,8 @@
+CHANGES in `bpcp' version 1.3.3
+- fixed error in bpcp2samp (leftover browser in function script).
+- changed default linetype in lines.kmciLR
+
+
 CHANGES in `bpcp' VERSION 1.3.2
 - fixed error when first observation was censored. This error was introduced in 1.3.0. 
 - update references to Fay and Brittain 2016.
