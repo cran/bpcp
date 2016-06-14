@@ -1,8 +1,8 @@
 Package: bpcp
 Type: Package
 Title: Beta Product Confidence Procedure for Right Censored Data
-Version: 1.3.3
-Date: 2016-05-03
+Version: 1.3.4
+Date: 2016-06-14
 Author: Michael P. Fay
 Maintainer: Michael P. Fay <mfay@niaid.nih.gov>
 Depends: stats
@@ -11,6 +11,6 @@ Description: Calculates nonparametric pointwise confidence intervals for the sur
 License: GPL (>= 2)
 LazyLoad: yes
 NeedsCompilation: no
-Packaged: 2016-05-03 20:47:54 UTC; faym
+Packaged: 2016-06-14 12:47:08 UTC; faym
 Repository: CRAN
-Date/Publication: 2016-05-04 09:00:45
+Date/Publication: 2016-06-14 15:22:51

@@ -1107,8 +1107,11 @@ abmm<-function(a1,b1,a2=NULL,b2=NULL){
     a<-c(a1,a2)
     b<-c(b1,b2)
     ## March 25, 2016: problem if a=4 b=0, gives NaN
+    ## June 14, 2016: problem if a=c(201,200) and b=c(0,0)
+    ##      output 2 dimensional vector. Should be list(a=200,b=0)
+    ##      also  list(a=201,b=0) would give same answers
     if (length(a)==1 | all(b==0) ){
-        out<-list(a=a,b=b)
+        out<-list(a=a[length(a)],b=b[length(a)])
     }  else if (any(a==0)) {
         out<-list(a=0,b=b[1])
     }  else {
