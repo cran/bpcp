@@ -85,12 +85,14 @@ Michael P. Fay
 }
 \examples{
 data(leuk2)
-bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,35,parmtype="ratio")
-
-bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,35,parmtype="difference")
+# test ratio of S(20) in two treatment groups, 
+# S(20)=survival function at 20 weeks 
+bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,20,parmtype="ratio")
+# test difference of S(20) values
+bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,20,parmtype="difference")
 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
-\keyword{ ~kwd1 }
-\keyword{ ~kwd2 }% __ONLY ONE__ keyword per line
+\keyword{htest}
+\keyword{survival}% __ONLY ONE__ keyword per line

@@ -1,5 +1,5 @@
 
-export(uvab,abmm,qqbeta,kmgw.calc,bpcp,bpcp.mm,bpcp.mc,bpcpMidp.mm,
+export(uvab,abmm,qqbeta,kmgw.calc,bpcp,bpcp.mm,bpcp.mc,bpcpfit,bpcpMidp.mm,tidykmciLR,
 kmcilog,intChar,borkowf.calc,getmarks,getmarks.x,
 kmciBorkowf,kmci1TG,kmciTG,kmciSW,kmConstrain,rejectFromInt,kmConstrainBeta.calc,kmtestConstrainBeta,kmtestConstrainBoot,
 kmciSW,kmtestALL,citoLR,StCI, bpcp2samp, betaMeldTest, betaMeldTestMidp.mc, meldMC, bpcp2sampControl, fixtdiff, mdiffmedian.test,bpcpControl)
@@ -8,6 +8,12 @@ kmciSW,kmtestALL,citoLR,StCI, bpcp2samp, betaMeldTest, betaMeldTestMidp.mc, meld
 importFrom("graphics", "segments", "points")
 importFrom("grDevices", "gray")
 importFrom("stats", "median","quantile","pbeta", "dbeta", "qbeta", "integrate", "uniroot", "rbeta", "qnorm", "pnorm", "qchisq", "pbinom")
+importFrom("graphics", "legend")
+importFrom("stats", "model.extract", "model.frame", "terms", "time")
+importFrom("ggplot2", "ggplot", "geom_line", "geom_ribbon", "labs", "xlab", "ylab", "aes_string")
+importFrom("survival", "is.Surv", "strata")
+
+
 
 S3method(plot,kmci)
 S3method(lines,kmci)
@@ -15,11 +21,23 @@ S3method(summary,kmci)
 S3method(plot,kmciLR)
 S3method(lines,kmciLR)
 S3method(summary,kmciLR)
+S3method(print,kmciLR)
 S3method(StCI,default)
 S3method(StCI,kmciLR)
 S3method(median,kmci)
 S3method(median,kmciLR)
+S3method(median,kmciLRtidy)
+S3method(median,kmciLRgroup)
 S3method(quantile,kmci)
 S3method(quantile,kmciLR)
-
+S3method(quantile,kmciLRtidy)
+S3method(quantile,kmciLRgroup)
+S3method(plot,kmciLRtidy)
+S3method(summary,kmciLRtidy)
+S3method(print,kmciLRtidy)
+S3method(plot,kmciLRgroup)
+S3method(summary,kmciLRgroup)
+S3method(print,kmciLRgroup)
+S3method(bpcpfit,formula)
+S3method(bpcpfit,default)
 

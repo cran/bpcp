@@ -8,9 +8,9 @@ citEntry(entry="Article",
   volume       = "14",
   number       = "4",  
   pages        = "723-736",
-  url ="http://www.niaid.nih.gov/about/organization/dcr/BRB/Pages/michael.aspx",
+  url ="https://www.niaid.nih.gov/about/brb-staff-fay",
   textVersion  ="Fay MP, Brittain, EH, Proschan, MA (2013). Pointwise confidence intervals for a survival distribution with small samples or heavy censoring. Biostatistics 14(4) 723-736.",
-  header = "For inferences in one sample using the standard (monotonic=FALSE, midp=FALSE) BPCP cite:"
+  header = "To reference the original paper that developed the first version (monotonic=FALSE, midp=FALSE) of the one sample BPCP (this is mostly for referencing the mathematics, not a for referencing a routine application) cite:"
 )
 
 citEntry(entry="Article",
@@ -21,9 +21,9 @@ citEntry(entry="Article",
   volume       = "",
   number       = "",  
   pages        = "",
-  url ="http://www.niaid.nih.gov/about/organization/dcr/BRB/Pages/michael.aspx",
-  textVersion  ="Fay MP, Brittain, EH (2016). Finite sample pointwise confidence intervals for a survival distribution with right-censored data. Statistics in Medicine. doi: 10.1002/sim.6905",
-  header = "For inferences in one sample using other BPCP versions cite:"
+  url ="https://www.niaid.nih.gov/about/brb-staff-fay",
+  textVersion  ="Fay MP, Brittain, EH (2016). Finite sample pointwise confidence intervals for a survival distribution with right-censored data. Statistics in Medicine. 35:2726-2740.",
+  header = "For one sample confidence intervals using current BPCP versions cite:"
 )
 
 citEntry(entry="Article",
@@ -31,10 +31,10 @@ citEntry(entry="Article",
   author       = personList(as.person("Michael P. Fay"),as.person("Michael A. Proschan"),as.person("Erica H. Brittain")), 
   journal      = "Biometrics",
   year ="2015",
-  url ="http://www.niaid.nih.gov/about/organization/dcr/BRB/Pages/michael.aspx",
+  url ="https://www.niaid.nih.gov/about/brb-staff-fay",
  volume="71",
  pages ="146-156",
   textVersion  ="Fay MP,  Proschan, MA, Brittain, E, (2015). Combining one sample confience procedures for inference in the two sample case. Biometrics 71:146-156",
-  header = "For inferences on differences in two survival distributions cite:"
+  header = "For inferences on differences in two survival distributions or differences in medians cite:"
 )
 

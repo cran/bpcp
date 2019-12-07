@@ -1,32 +1,41 @@
 \name{plot.kmciLR}
 \alias{plot.kmci}
 \alias{plot.kmciLR}
+\alias{plot.kmciLRtidy}
+\alias{plot.kmciLRgroup}
 \alias{lines.kmci}
 \alias{lines.kmciLR}
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
-Plot and lines methods for \code{kmci} and \code{kmciLR} objects. 
+Plot and lines methods for \code{kmci}, \code{kmciLR}, \code{kmciLRtidy}, and \code{kmciLRgroup} objects. 
 }
 \description{
-Plots survival curves and/or confidence intervals. 
+Plots survival curves and/or confidence intervals. \code{kmciLR} objects from the bpcp function will plot using base R plot. 
+If a \code{kmciLRtidy} object is created using bpcpfit (plotstyle = "ggplot"), the plot will display using ggplot. 
+If a \code{kmciLRgroup} object is created using bpcpfit (plotstyle = "standard"), the plot will display using base R.
 }
 \usage{
 
 \method{plot}{kmci}(x, ...)
 
 \method{plot}{kmciLR}(x, XLAB = "time", YLAB = "Survival", YLIM = c(0, 1), 
-    ciLTY = 2, ciCOL = gray(0.8), mark.time = NULL, linetype = "both", ...)
+    ciLTY = 2, ciCOL = gray(0.8), mark.time = NULL, 
+    linetype = "both", ...)
 
 \method{lines}{kmciLR}(x, lty = c(2, 1), col = c(gray(0.8), gray(0)), 
     linetype = "both", mark.time = NULL, ...)
 
 \method{lines}{kmci}(x, ...)
 
+\method{plot}{kmciLRtidy}(x, ...)
+                          
+\method{plot}{kmciLRgroup}(x,XLAB="Time",YLAB="Survival",
+ YLIM=c(0,1),ciLTY=2,ciCOL=gray(.8), linetype="both", ...)
 }
 %- maybe also 'usage' for other objects documented here.
 \arguments{
   \item{x}{
-\code{kmci} or \code{kmciLR} object (created by functions described in \code{\link{kmtestALL}}) 
+\code{kmci}, \code{kmciLR}, \code{kmciLRtidy}, or \code{kmciLRgroup} object (created by functions described in \code{\link{kmtestALL}}) 
 }
   \item{XLAB}{
 label for x axis
@@ -90,9 +99,27 @@ fitTG<-kmciTG(leuk$time,leuk$status)
 plot(fitTG)
 ## bpcp creates kmciLR object 
 fitBP<-bpcp(leuk$time,leuk$status)
-lines(fitBP,lwd=3,lty=1,col=gray(.5))
-legend(0,.2,legend=c("Kaplan-Meier","Thomas-Grunkemeier 95 pct CI","Beta Product 95 pct CI"),
+lines(fitBP,lwd=3,lty=1,col=gray(.5),linetype="ci")
+legend(0,.2,legend=c("Kaplan-Meier","Thomas-Grunkemeier 95 pct C
+I","Beta Product 95 pct CI"),
     lwd=c(1,1,3),lty=c(1,2,1),col=c(gray(0),gray(.8),gray(.5)))
+data(leuk2)
+## bpcpfit creates kmciLR object which is plotted with ggplot
+fitBPsurv <- bpcpfit(Surv(time, status)~treatment, data=leuk2)
+plot(fitBPsurv)
+## this works even if no treatment variable is specified
+plot(bpcpfit(Surv(time, status)~1, data=leuk2))
+
+## if plotstyle "standard" is specified, a base R plot is produced
+a <- bpcpfit(leuk2$time, leuk2$status, leuk2$treatment, plotstyle = "standard")
+plot(a)
+
+#can also create a tidy object to customize ggplot further
+tidy <- tidykmciLR(fitBPsurv)
+ggplot(tidy, aes(x = time, y = surv, ymin = lower, ymax = upper, col = group)) + 
+  geom_line(show.legend=FALSE) + geom_ribbon(alpha = .2, aes(fill=group)) + 
+  xlab("Time") + ylab("Survival") + 
+  ggtitle("K-M curves with bpcp CIs") 
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

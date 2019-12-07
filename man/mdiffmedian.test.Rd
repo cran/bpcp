@@ -31,7 +31,7 @@ confidence level of the interval.
 }
 }
 \details{
-The melded confidence interval method is a general method for combining two one-sample confidence intervals (CIs). In this function, we use the melded CI method on the two one-sample CIs from the sign test that allows for ties. This creates CIs for the difference in medians that requires very few assumptions. In particular, ties are allowed and no shift assumption is needed.  For details see Fay, Proschan and Brittain (2014). 
+The melded confidence interval method is a general method for combining two one-sample confidence intervals (CIs). In this function, we use the melded CI method on the two one-sample CIs from the sign test that allows for ties. This creates CIs for the difference in medians that requires very few assumptions. In particular, ties are allowed and no shift assumption is needed.  For details see Fay, Proschan and Brittain (2015). 
 }
 \value{
 a list of class 'htest' with elements:
@@ -46,7 +46,7 @@ a list of class 'htest' with elements:
 \item{data.name}{description of input}
 }
 \references{
-Fay, MP, Proschan, MA, Brittain, E (2014). Combining One-sample confidence procedures for inference in the two-sample case. (unpublished manuscript).
+Fay, MP, Proschan, MA, Brittain, E (2015). Combining One-sample confidence procedures for inference in the two-sample case. Biometrics. 71: 146-156.
 }
 \author{
 Michael P. Fay

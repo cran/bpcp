@@ -22,7 +22,7 @@
 \item{\dots}{further arguments to be passed to or from methods.}
 }
 \details{Since the Kaplan-Meier estimator is undefined after the last observation if it is censored and many confidence interval methods are not defined there either, 
-we need to explicitly define what to do. (For objects of the kmciLR class, the confidence intervals are defined over the positive real line and the \code{afterMax} is ignored.) The \code{afterMax} has four options for this: 'continue' (keep surv and ci values the same as the last calculated one), 
+we need to explicitly define what to do. (For objects of the \code{kmciLR} class, the confidence intervals are defined over the positive real line and the \code{afterMax} is ignored.) The \code{afterMax} has four options for this: 'continue' (keep surv and ci values the same as the last calculated one), 
 'zero' (surv and lower go to zero, upper stays same), 'zeroNoNA'
 (surv and lower go to zero, upper stays same unless it is NA, then it takes on the last non-missing upper value), 
 'half' (surv goes to half value, lower goes to zero, upper stays same).

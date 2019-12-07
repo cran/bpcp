@@ -22,6 +22,7 @@
 \alias{uvab}
 \alias{rejectFromInt}
 
+
 %- Also NEED an '\alias' for EACH other topic documented here.
 \title{
 Internal functions
@@ -135,8 +136,6 @@ rejectFromInt inputs theta and an interval and gives a vector with 3 terms, estG
 estLTnull=1 if reject and estimate is less than null value, two.sided=1 if reject in either direction. 
 The thetaParm=TRUE means that theta is the parameter under the null so that interval is a confidence interval,
 while thetaParm=FALSE means that theta is an estimate of the parameter and interval are quantiles from the null distribution. 
-
-
 
 uvab takes means and variances of beta distributions and returns shape parameters. 
 }

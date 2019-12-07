@@ -860,6 +860,61 @@ plot.kmciLR<-function(x,XLAB="time",YLAB="Survival",
 
 }
 
+plot.kmciLRtidy <- function(x, ...) {
+  tidyout <- tidykmciLR(x)
+  if (ncol(tidyout) == 5) {
+    ggplot(tidyout, aes_string(x = "time", y = "surv", ymin = "lower", ymax = "upper", linetype = "group")) + 
+      geom_line() + geom_ribbon(alpha = .2) + labs(linetype = x[[1]]$groupVarName) + xlab("Time") + ylab("Survival")
+  }
+  else {
+    ggplot(tidyout, aes_string(x = "time", y = "surv", ymin = "lower", ymax = "upper")) + 
+      geom_line() + geom_ribbon(alpha = .2) + xlab("Time") + ylab("Survival")
+  }
+}
+
+
+plot.kmciLRgroup <- function(x,XLAB="Time",YLAB="Survival",
+                             YLIM=c(0,1),ciLTY=2,
+                             ciCOL=gray(.8), linetype="both",...) {
+  tidyout <- tidykmciLR(x)
+  md<-match.call(expand.dots=FALSE)
+  dots<-as.list(md)[["..."]]
+  class(dots)<-"list" 
+  if (is.null(dots[["xlab"]])) dots$xlab<-XLAB
+  if (is.null(dots[["ylab"]])) dots$ylab<-YLAB
+  if (is.null(dots[["ylim"]])) dots$ylim<-YLIM
+  do.call("plot",c(list(
+    x=c(tidyout$time,tidyout$time[tidyout$time<Inf]),
+    y=c(tidyout$surv,tidyout$surv[tidyout$time<Inf]),
+    type="n"), dots) )
+  
+  #plot(c(x$L,x$R[x$R<Inf]),c(x$surv,x$surv[x$R<Inf]),
+  #    ylim=YLIM,type="n",xlab=XLAB,ylab=YLAB,...)
+  n<-length(tidyout$time)
+  
+  #If a group variable is provided, change the line width based on the level of the treatment variable
+  #and provide a legend
+  #If no group variable is provided, don't change the line width
+  if (linetype=="both" | linetype=="surv"){
+    segments(tidyout$time,tidyout$surv,tidyout$time,tidyout$surv, lwd=as.numeric(factor(tidyout$group)), ...)
+    segments(tidyout$time[-1],tidyout$surv[-1],tidyout$time[-n],tidyout$surv[-n], lwd=as.numeric(factor(tidyout$group)), ...)
+    legend("topright", legend = unique(tidyout$group), lwd = unique(as.numeric(factor(tidyout$group))))
+  }
+  
+  if (linetype=="both" | linetype=="ci"){
+    segments(tidyout$time,tidyout$lower,tidyout$time,
+             tidyout$lower,lty=ciLTY,col=ciCOL,...)
+    segments(tidyout$time[-1],tidyout$lower[-1],tidyout$time[-n],
+             tidyout$lower[-n],lty=ciLTY,col=ciCOL,...)
+    
+    segments(tidyout$time,tidyout$upper,tidyout$time,
+             tidyout$upper,lty=ciLTY,col=ciCOL,...)
+    segments(tidyout$time[-1],tidyout$upper[-1],tidyout$time[-n],
+             tidyout$upper[-n],lty=ciLTY,col=ciCOL,...)
+  }
+}
+
+
 citoLR<-function(x){
     ## add L and R to kmci object
     x$L<-c(0,x$time)
@@ -910,7 +965,7 @@ lines.kmciLR<-function(x,lty=c(2,1),col=c(gray(.8),gray(0)),linetype="both",mark
             lty=lty[2],col=col[2],...)
         segments(x$L[-1],x$surv[-1],x$R[-n],x$surv[-n],
             lty=lty[2],col=col[2],...)
-        if (mark.time){
+        if (mark.time & length(x$cens)>0){
             out<-StCI(x,x$cens)
             points(out$time,out$survival,pch=3,col=col[2])
         }
@@ -944,6 +999,30 @@ summary.kmciLR<-function(object,...){
     out
 }
 #summary(norm)
+
+summary.kmciLRgroup <- function(object, ...) {
+  for (i in 1:length(object)) {
+    assign(paste("ddat",i,sep="_"), cbind(summary(object[[i]]), rep(names(object)[i], length(object[[i]]$Interval))))
+  }
+  df <- mget(ls(pattern = "ddat"))
+  out <- as.data.frame(NULL)
+  for (i in 1:length(df)) {
+    out <- rbind(out, df[[i]])
+  }
+  names(out)[5] <- object[[1]]$groupVarName
+  return(out)
+}
+
+summary.kmciLRtidy <- function(object, ...) {
+  if (length(object) == 1) {
+    out <- summary(object[[1]])
+  }
+  else {
+    class(object) <- "kmciLRgroup"
+    out <- summary.kmciLRgroup(object, ...)
+  }
+  return(out)
+}
 
 StCI<-function(x,tstar,afterMax="continue",...){
    UseMethod("StCI")
@@ -1094,12 +1173,43 @@ quantile.kmci<-function(x,probs=c(.25,.5,.75),...){
     quantile.kmciLR(newx,probs)
 }
 
+quantile.kmciLRgroup <- function(x,probs=c(.25,.5,.75),...) {
+  out <- list()
+  for (i in 1:length(x)) {
+    out[[i]] <- quantile(x[[i]], probs)
+    names(out)[i] <- names(x)[i]
+  }
+  return(out)
+}
+
+quantile.kmciLRtidy <- function(x,probs=c(.25,.5,.75),...) {
+  if (length(x) == 1) {
+    out <- quantile(x[[1]], probs)
+  }
+  else {
+    class(x) <- "kmciLRgroup"
+    out <- quantile.kmciLRgroup(x, probs)
+  }
+  return(out)
+}
+
+
 median.kmciLR<-function(x,...){
     quantile.kmciLR(x,probs=.5)
 }
 median.kmci<-function(x,...){
     quantile.kmci(x,probs=.5)
 }
+
+
+median.kmciLRtidy <- function(x, ...) {
+  quantile.kmciLRtidy(x,probs=.5)
+}
+
+median.kmciLRgroup <- function(x, ...) {
+  quantile.kmciLRgroup(x,probs=.5)
+}
+
 
 abmm<-function(a1,b1,a2=NULL,b2=NULL){
     ## Jan 6, 2016: add NULL defaults, so can leave off a2 and b2
@@ -1484,6 +1594,198 @@ bpcp<-function(time,status,nmc=0,alpha=.05,Delta=0,stype="km", midp=FALSE, monot
     out
 }
 
+#Function to create "tidy" output from bpcp function
+#Transform kmciLR object into dataframe 
+#Takes in a list of kmciLR objects
+tidykmciLR <- function(x) {
+  #Create empty dataframe to store output
+  tidyout <- data.frame(NULL)
+  
+  #For each group, "tidy" the output into a new dataframe
+  if (attr(x, "class") %in% c("kmciLRtidy", "kmciLRgroup")) {
+    num <- length(x)
+    for (i in 1:length(x)) {
+      new <- with(x[[i]], data.frame(time = sort(c(L, R)), surv = rep(surv, each = 2), 
+                                     lower = rep(lower, each = 2), upper = rep(upper, each = 2)))
+      #Add group variable if it exists
+      if (num != 1) {
+        new$group <- names(x[i])
+      }
+      #Add to tidy dataframe
+      tidyout <- rbind(tidyout, new)
+    }
+  }
+  else if (attr(x, "class") == "kmciLR") {
+    tidyout <- with(x, data.frame(time = sort(c(L, R)), surv = rep(surv, each = 2), 
+                                  lower = rep(lower, each = 2), upper = rep(upper, each = 2)))
+  }
+  return(tidyout)
+}
+
+bpcpfit <- function(time, ...) {
+  UseMethod("bpcpfit")
+}
+
+#Takes same inputs as bpcp function
+bpcpfit.formula <- function(formula, data, subset, na.action, ...) {
+  #Borrowed from survfit
+  Call <- match.call()
+  Call[[1]] <- as.name('bpcpfit')  
+  indx <- match(c('formula', 'data'), names(Call), nomatch=0)
+  #Make sure formula is given
+  if (indx[1]==0) {
+    stop("a formula argument is required")
+  }
+  if (missing(data)) 
+    data <- environment(formula)
+  #Change to model.frame format using data
+  temp <- model.frame(formula, data=data)
+  #Evaluate
+  mf <- eval.parent(temp)
+  #Get terms of formula
+  Terms <- terms(formula)
+  #Make sure there are no interaction terms present in the formula
+  ord <- attr(Terms, 'order')
+  if (length(ord) & any(ord !=1)) {
+    stop("Interaction terms are not valid for this function")
+  }
+  n <- nrow(mf)
+  #Get out Y variable (time and censoring)
+  Y <- model.extract(mf, 'response')
+  #Ensure a Surv object is provided to the formula
+  if (!is.Surv(Y)) {
+    stop("Response must be a survival (Surv) object")
+  }
+  #Get labels from formula (group variable)
+  ll <- attr(Terms, 'term.labels')
+  if (length(ll) > 1) {
+    stop("Only a treatment/grouping variable can be specified in this function. No other covariates should be included.")
+  }
+  #Determine if group variable was provided
+  if (length(ll) == 0) {
+    output <- do.call("bpcpfit.default", list(Y[ ,1], Y[ ,2], ...))
+  }
+  else {
+    X <- strata(mf[ll], shortlabel = TRUE)
+    #Combine outcome and response variables
+    Z <- data.frame(cbind(Y, X))
+    #Split my levels of group (treatment) variable
+    newZ <- split(Z, Z$X)
+    
+    #Iterate through each level of the treatment variable, and do the bpcp function of the corresponding data. Store the results in a list
+    for (i in 1:length(newZ)) {
+      if (length(unique(newZ[[i]]$status)) > 2) {
+        stop("Interval censoring is not supported by bpcp or bpcpfit.")
+      }
+    }
+    output <- do.call("bpcpfit.default", list(Z[ ,1], Z[ ,2], Z[ ,3], ...))
+    names(output) <- levels(factor(X))
+    for (i in 1:length(output)) {
+      output[[i]]$groupVarName <- ll
+    }
+  }
+  return(output)
+}
+
+bpcpfit.default <- function(time, status = NULL, group = NULL, formula=NULL, nmc=0, alpha=NULL, conf.level=0.95, Delta=0, stype="km", midp=FALSE,
+                            monotonic=NULL, control=bpcpControl(), plotstyle = "ggplot", data=NULL, subset=NULL, na.action=NULL, ...) {
+  if (is.null(time)) {
+    stop("Time is required.")
+  }
+  if (!is.null(alpha)) {
+    print("Warning: alpha is out of date. Use conf.level instead. Setting conf.level to 1-alpha and ignoring conf.level.")
+  }
+  else {
+    alpha <- 1-conf.level
+  }
+  Call <- match.call()
+  if (is.null(group)) {
+    if (length(unique(status)) > 2) {
+      stop("Interval censoring is not supported by bpcp or bpcpfit.")
+    }
+    out <- bpcp(time, status, nmc=nmc, alpha=alpha, Delta=Delta, stype=stype, midp=midp,
+                monotonic=monotonic, control=control)
+    out$num <- length(time)
+    out$events <- length(which(status == max(status)))
+    if (plotstyle == "ggplot") {
+      results <- list()
+      results <- append(results, list(out))
+      class(results) <- "kmciLRtidy"
+    }
+    else {
+      results <- out
+    }
+  }
+  else {
+    results <- list()
+    Z <- as.data.frame(cbind(time, status, group))
+    names(Z) <- c("V1", "V2", "V3")
+    newZ <- split(Z, Z$V3)
+    results <- list()
+    #Iterate through each level of the treatment variable, and do the bpcp function of the corresponding data. Store the results in a list
+    for (i in 1:length(newZ)) {
+      if (length(unique(newZ[[i]]$V2)) > 2) {
+        stop("Interval censoring is not supported by bpcp or bpcpfit.")
+      }
+      results <- append(results, list(bpcp(newZ[[i]]$V1, newZ[[i]]$V2, nmc=nmc, alpha=alpha, Delta=Delta, stype=stype, midp=midp,
+                                           monotonic=monotonic, control=control)))
+      results[[i]]$num <- length(newZ[[i]]$V1)
+      results[[i]]$events <- length(which(newZ[[i]]$V2 == max(newZ[[i]]$V2)))
+      results[[i]]$groupVarName <- rev(strsplit(as.character(Call["group"]), "$", fixed = TRUE)[[1]])[1]
+    }
+    #Name each output from the bpcp function with the corresponding treatment
+    names(results) <- levels(factor(group))
+    if (plotstyle == "ggplot") {
+      class(results) <- "kmciLRtidy"
+    }
+    else if (plotstyle == "standard") {
+      class(results) <- "kmciLRgroup"
+    }
+    else {
+      stop('Plot style must be either "ggplot" or "standard"')
+    }
+  }
+  return(results)
+}
 
 
+print.kmciLRgroup <- function(x, ...) {
+  #Store results in a matrix
+  out<-matrix(NA,length(x),5,dimnames=list(NULL, c("n", "events", "median", paste0(x[[1]]$conf.level, "LCL"), paste0(x[[1]]$conf.level, "UCL"))))
+  #For each level of treatment variable, also get number of subjects and number of events and print those as well
+  for (i in 1:length(x)) {
+    out[i,3:5]<- median(x)[[i]][2:4]
+    out[i, 1] <- x[[i]]$num
+    out[i, 2] <- x[[i]]$events
+  }
+  #Row names are levels of treatment variable
+  rownames(out) <- names(x)
+  invisible(x)
+  print(out)
+}
+
+#Output mirrors output of survfit function
+print.kmciLRtidy <- function(x, ...) {
+  if (length(x) == 1) {
+    print(x[[1]])
+  }
+  else{
+    class(x) <- "kmciLRgroup"
+    print.kmciLRgroup(x)
+  }
+  invisible(x)
+}
+
+print.kmciLR <- function(x, ...) {
+  #Store results in a matrix
+  out<-matrix(NA,1,5,dimnames=list(NULL, c("n", "events", "median", paste0(x$conf.level, "LCL"), paste0(x$conf.level, "UCL"))))
+  out[1,3:5]<- median(x)[2:4]
+  out[1, 1] <- x$num
+  out[1, 2] <- x$events
+  
+  #Row names are levels of treatment variable
+  row.names(out) <- NULL
+  invisible(x)
+  print(out)
+}
 

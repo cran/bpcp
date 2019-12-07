@@ -3,17 +3,18 @@
 \alias{kmciLR}
 
 \title{
-  Kaplan-Meier (Survival Curve) Confidence Interval LR Object 
+  Kaplan-Meier (Survival Curve) Confidence Interval LR Tidy Object 
 }
 \description{
-The \code{kmciLR} class returned by the functions \code{\link{bpcp}} or \code{\link{kmciBorkowf}}, and
-represents a fitted survival curve with pointwise confidence intervals. 
 
 The \code{kmciLR} class allows for confidence intervals to change at  any time point, 
 while the \code{\link{kmci}} class only has the confidence intervals change at observed failures.
 
 
-Objects of this class has methods for the functions \code{summary}, \code{plot}, \code{lines}. 
+Objects of this class has methods for the functions \code{summary}, \code{plot}. 
+
+formula, data, nmc=0, alpha=.05, Delta=0, stype="km", midp=FALSE,
+                         monotonic=NULL, control=bpcpControl()
 
 }
 \section{Structure}{
@@ -57,10 +58,8 @@ the level of the confidence limits, e.g., 0.95.
 }
 }
 \seealso{
-\code{\link{plot.kmci}},  
-\code{\link{summary.kmci}},
-\code{\link{StCI.kmci}},
-\code{\link{median.kmci}},
-\code{\link{quantile.kmci}}.   
+\code{\link{plot.kmciLR}},  
+\code{\link{summary.kmciLR}},
+\code{\link{bpcp}}.
 }
 \keyword{survival}

@@ -1,3 +1,12 @@
+CHANGES in `bpcp' version 1.4
+- added new function `bpcpfit' that will produce multiple survival curves with the pointwise confidence intervals for right censored data for different treatment/grouping variables.
+- a plotstyle can be specified in `bpcpfit' so the output can be plotted in either base R or ggplot
+
+CHANGES in `bpcp' version 1.3.5
+- fixed references to Fay, Proschan and Brittain (2013) and Fay and Brittain (2016).
+- fixed error in lines.kmciLR that occurred when marktime=TRUE but there is no censored values.
+- edited some examples in man pages
+
 CHANGES in `bpcp' version 1.3.4
 - fixed warning in bpcp2samp. The answers were correct, but the warning was due to bad coding. Specifically, the abmm function returned a list with its elements greater than 1 dimensional vectors when length(a)>1 and all(b==0). Thanks to Marcel Wolbers for pointing this out.  
 
