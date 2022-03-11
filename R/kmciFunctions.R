@@ -1029,7 +1029,8 @@ StCI<-function(x,tstar,afterMax="continue",...){
 }
 StCI.default<-function(x,tstar,afterMax="continue",...){
     ### get survival and confidence interval at t from a survfit or kmci object
-    if (class(x)=="survfit"){
+    #if (class(x)=="survfit"){
+    if (is(x,"survfit")){
         x$conf.level<-x$conf.int
     }
     if (length(x$strata)>1){
@@ -1385,8 +1386,7 @@ bpcpControl<-function(midpMMTol=.Machine$double.eps^0.25,
 }
 
 
-
-
+# bpcp.mc is a function to calculate the bpcp CIs by Monte Carlo simulation
 bpcp.mc<-function(x,nmc=100,alpha=.05, testtime=0, DELTA=0, midp=FALSE){
     # Jan 6, 2016: totally rewrote function according to Discrete notes. New convention!
     ### for each time t_j there are 2 intervals

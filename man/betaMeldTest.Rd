@@ -10,7 +10,7 @@ This function gives a two sample melded beta test together with the associated m
 \usage{
 betaMeldTest(betaParms1, betaParms2,
     nullparm = NULL, 
-    parmtype = c("difference", "oddsratio", "ratio"), 
+    parmtype = c("difference", "oddsratio", "ratio","cdfratio"), 
     conf.level = 0.95, conf.int = TRUE, 
     alternative = c("two.sided", "less", "greater"), 
     eps = 10^-8, dname = "", estimate1 = NA, estimate2 = NA)
@@ -27,7 +27,7 @@ a list of the beta parameters for group 2
 null value of the parameter of interest, default of NULL gives 0 if parmtype='difference' and 1 otherwise
 }
   \item{parmtype}{
-parameter type for comparing the survival function of the two groups, either 'difference' 'ratio' or 'oddsratio'
+parameter type for comparing the survival function of the two groups, either 'difference' 'ratio' 'oddsratio' or 'cdfratio'
 }
   \item{conf.level}{
 confidence level, e.g., 0.95
@@ -55,7 +55,8 @@ estimate of mean for beta parameter for group 2 (parameter of htest object)
 If the upper and lower confidence distributions for both samples are described by beta distributions, then you can create a CD test using this function. For example,
 if you have sample 1 is binomial with x (with 0<x<n) out of n positive responses, then the 100(1-alpha) confidence interval is qbeta(alpha/2, x, n-x+1) and 
 qbeta(1-alpha/2, x+1, n-x). So the lower confidence distribution is beta with parameters a=x and b=n-x+1, and the upper CD is beta with parameters a=x+1 and b=n-x. 
-  
+
+See \code{\link{bpcp2samp}} for a full description of the parmtypes.
 }
 \value{
 an object of class 'htest'

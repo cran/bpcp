@@ -12,6 +12,7 @@ importFrom("graphics", "legend")
 importFrom("stats", "model.extract", "model.frame", "terms", "time")
 importFrom("ggplot2", "ggplot", "geom_line", "geom_ribbon", "labs", "xlab", "ylab", "aes_string")
 importFrom("survival", "is.Surv", "strata")
+importFrom("methods", "is")
 
 
 

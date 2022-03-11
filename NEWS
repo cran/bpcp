@@ -1,3 +1,11 @@
+CHANGES in `bpcp' version 1.4.2
+- changed class(x)=="specificClass" statements to is(x,"specificClass") as requested by CRAN.
+
+CHANGES in `bpcp' version 1.4.1
+- included new parmtypes ('cdfratio', 'one.minus.ratio', 'one.minus.cdfratio') for bpcp2samp.
+- fixed typo in output for bpcp2samp (delete "Null" from Nullparm name). 
+
+
 CHANGES in `bpcp' version 1.4
 - added new function `bpcpfit' that will produce multiple survival curves with the pointwise confidence intervals for right censored data for different treatment/grouping variables.
 - a plotstyle can be specified in `bpcpfit' so the output can be plotted in either base R or ggplot

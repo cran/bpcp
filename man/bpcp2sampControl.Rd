@@ -23,11 +23,13 @@ type of survival estimate, either "km" for Kaplan-Meier or "mue" for median unbi
 small value to make integration tractable
 }
 \item{nmc}{number of Monte Carlo replications}
-\item{method}{either 'mm.mc' (method of moments for one sample, meld with Monte Carlo) or 'mc.mc' (Monte Carlo for one sample and melding) }
+\item{method}{either 'mm.mc' (method of moments for one sample, meld with Monte Carlo) or 'mc.mc' (Monte Carlo for one sample and melding), see details. }
 \item{seed}{random number seed, if NULL do not set random number seed}
 }
 \details{
 We set the seed by default, so that the same data set will always give the same results. If you are doing simulations, this setting of the seed will give problems. So use seed=NULL. 
+
+For method='mm.mc' this is shorthand for calculate the method of moments for one sample, and meld together the two sampling using Monte Carlo methodss; however, technically, that is only done when midp=TRUE, if midp=FALSE then the melding uses numeric integration. 
 }
 \value{
 A list containing the 6 arguments.

@@ -10,11 +10,13 @@ Tests for dissimilarity between two groups in their survival distributions at a 
 }
 \usage{
 bpcp2samp(time, status, group, testtime, 
-    parmtype = c("difference", "oddsratio", "ratio"), 
+    parmtype = c("difference", "oddsratio", "ratio","cdfratio",
+        "one.minus.ratio","one.minus.cdfratio"), 
     nullparm = NULL, 
     alternative = c("two.sided", "less", "greater"), 
     conf.level = 0.95, 
     midp=FALSE,
+    changeGroupOrder=FALSE,
     control = bpcp2sampControl())
 }
 %- maybe also 'usage' for other objects documented here.
@@ -32,7 +34,7 @@ group for test, should have two levels, to change order use as factor and change
 fixed time when you want to test for a difference
 }
   \item{parmtype}{
-parameter type for comparing the survival function of the two groups, either 'difference' 'ratio' or 'oddsratio'
+parameter type for comparing the survival function of the two groups, either 'difference' 'ratio' 'oddsratio' 'cdfratio' 'one.minus.ratio' or 'one.minus.cdfratio'
 }
   \item{nullparm}{
 null value of the parameter of interest, default of NULL gives 0 if parmtype='difference' and 1 otherwise
@@ -44,14 +46,16 @@ character, either 'two.sided','less', or 'greater'
 confidence level, e.g., 0.95
 }
 \item{midp}{logical, do mid-p tests and confidence intervals?}
+\item{changeGroupOrder}{logical, change the order of the groups?}
   \item{control}{
 list of control parameters, see \code{\link{bpcp2sampControl}}
 }
 }
 \details{
 The melded confidence interval method is a very general procedure to create confidence intervals for the two sample tests by combining one sample confidence intervals. If S1 and S2 are the survival value at \code{testtime} from sample 1 (first value of \code{group}) and sample 2 (second value of \code{group}) respectively, then 
-we can get confidence intervals on the S2-S1 (\code{parmtype='difference'}), S2/S1 (\code{parmtype='ratio'}), or 
-(S2*(1-S1))/(S1*(1-S2)) (\code{parmtype='oddsratio'}). 
+we can get confidence intervals on the S2-S1 (\code{parmtype='difference'}), S2/S1 (\code{parmtype='ratio'}), 
+(S2*(1-S1))/(S1*(1-S2)) (\code{parmtype='oddsratio'}), (1-S1))/(1-S2)=F1/F2 (\code{parmtype='cdfratio'}),  1-S2/S1 (\code{parmtype='one.minus.ratio'}), 
+or 1-(1-S1))/(1-S2)=1-F1/F2(\code{parmtype='one.minus.cdfratio'}). 
 
 The resulting melded CIs appear to guarantee coverage as long as the one sample confidence intervals from which the melded CIs are derived have guaranteed coverage themselves. So since we use the BPCP for the one sample intervals and they appear to guarantee coverage (see Fay, Brittain, and Proschan, 2013), we expect the melded BPCP intervals to have at least nominal coverage. Note that when there is no censoring the melded CIs derived from the one-sample BPCPs, give matching inferences to Fisher's exact test (i.e., give theoretically identical p-values) when testing the null hypothesis of equality (S1=S2).  For details see Fay, Proschan and Brittain (2015).   
 
@@ -85,12 +89,24 @@ Michael P. Fay
 }
 \examples{
 data(leuk2)
-# test ratio of S(20) in two treatment groups, 
-# S(20)=survival function at 20 weeks 
-bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,20,parmtype="ratio")
 # test difference of S(20) values
-bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,20,parmtype="difference")
-
+# S(20)=survival function at 20 weeks 
+bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,
+   20,parmtype="difference")
+# test ratio of S(20) in two treatment groups, 
+bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,
+   20,parmtype="ratio")
+# change the order of the group variable to get the other ratio 
+bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,20,
+   parmtype="ratio",changeGroupOrder=TRUE)
+# estimate treatment effect= 1 - F(20,trt)/F(20,plac), 
+#   where F(20)=1-S(20) = Pr(T <=20) is the 
+#   cumulative distribution function 
+# Test whether treatment effect is greater than 30 pct
+bpcp2samp(leuk2$time,leuk2$status,leuk2$treatment,20,
+    parmtype="one.minus.cdfratio",nullparm=0.30,
+    alternative="greater",
+    changeGroupOrder=FALSE)
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.

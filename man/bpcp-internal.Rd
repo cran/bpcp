@@ -54,14 +54,14 @@ intChar(L, R, Lin = rep(FALSE, length(L)), Rin = rep(TRUE, length(L)), digits = 
 
 
 meldMC(T1,T2, nullparm=NULL, 
-    parmtype=c("difference","oddsratio","ratio"),
+    parmtype=c("difference","oddsratio","ratio","cdfratio"),
     conf.level=0.95, 
     alternative=c("two.sided","less","greater"),
     dname="",estimate1=NA, estimate2=NA)
 
 betaMeldTestMidp.mc(betaParms1,
     betaParms2,nullparm=NULL, 
-    parmtype=c("difference","oddsratio","ratio"),
+    parmtype=c("difference","oddsratio","ratio","cdfratio"),
     conf.level=0.95, conf.int=TRUE,
     alternative=c("two.sided","less","greater"),
     dname="",
@@ -103,7 +103,7 @@ betaMeldTestMidp.mc(betaParms1,
 \item{T1}{vector of nmc simulated values for parameter from group 1}
 \item{T2}{vector of nmc simulated values for parameter from group 2}
 \item{nullparm}{null value of the 2 sample parameter, when NULL gives values appropriate for parmtype}
-\item{parmtype}{type of parameter for the two sample test}
+\item{parmtype}{type of parameter for the two sample test, for details see \code{\link{bpcp2samp}}  }
 \item{conf.level}{confidence level}
 \item{conf.int}{logical, calculate confidence interval?}
 \item{alternative}{alternative hypothesis}
